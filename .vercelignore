@@ -1,0 +1,14 @@
+.git
+.github
+node_modules
+.expo
+dist
+web-build
+.vercel
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.p8
+*.mobileprovision

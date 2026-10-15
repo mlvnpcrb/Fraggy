@@ -1,0 +1,12 @@
+# Product decisions
+- Product: Fraggy
+- Platforms: Android and iOS, Expo Web preview on Vercel
+- Initial audience: Philippine fragrance community
+- Free: up to 7 owned perfume entries and 1 default shelf
+- Premium: unlimited entries and custom shelves, monthly/annual
+- Trading: free, perfume bottles, disclosed partials and decants
+- Do not delete data when Premium expires
+- Trade request count: distinct collectors with active pending offers
+- Trade completion: both parties confirm
+- Catalog source must be legally reviewed before production
+- Figma: https://www.figma.com/design/xA4Oh9k7cIWJGtfqivOT0X
