@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+var/
+*.egg-info/
+.env.*
+!.env.example
+!.env.staging.example
+inputs/*.urls
+wheelhouse/
+
+!.env.render.example

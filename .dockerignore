@@ -1,0 +1,13 @@
+.git
+.venv
+.env
+var
+__pycache__
+.pytest_cache
+.env.*
+!.env.example
+!.env.staging.example
+wheelhouse
+inputs/*.urls
+
+!.env.render.example

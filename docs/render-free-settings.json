@@ -1,0 +1,16 @@
+{
+  "purpose": "Manual dashboard checklist; not a deployable Blueprint",
+  "serviceType": "Web Service",
+  "runtime": "Docker",
+  "instanceType": "Free",
+  "dockerfilePath": "./Dockerfile",
+  "dockerContext": ".",
+  "healthCheckPath": "/health",
+  "automaticDeploys": false,
+  "persistentDisks": [],
+  "workers": [],
+  "cronJobs": [],
+  "replicas": 1,
+  "costApproval": "Zero only; cancel if dashboard requests payment",
+  "providerValidation": "Current provider documentation and dashboard unverified"
+}

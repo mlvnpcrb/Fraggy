@@ -1,0 +1,5 @@
+# Copy to inputs/first-import.urls and add 1..10 actual product URLs.
+# Select one authorized source only. Blank lines and comments are ignored.
+# URLs must be absolute HTTPS URLs, without query parameters or fragments.
+# Do not put credentials, tokens, or agreement text here.
+# This template deliberately contains no fabricated perfume URLs.
