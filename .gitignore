@@ -7,3 +7,5 @@ dist/
 !.env.example
 *.log
 artifacts/
+/fraggy-*.png
+/fraggy-expo-prototype.zip

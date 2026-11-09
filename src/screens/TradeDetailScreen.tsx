@@ -5,7 +5,9 @@ import {
   View,
   StyleSheet,
   useWindowDimensions,
+  ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Screen } from "../components/Screen";
@@ -17,12 +19,14 @@ import { useDemo } from "../state/DemoProvider";
 import { collectors } from "../data/demo";
 import { colors, fonts } from "../theme";
 import { statusLabel } from "./TradesScreen";
+import { useReducedMotion } from "../components/Motion";
 import type { ScreenProps } from "../navigation";
 export function TradeDetailScreen({
   navigation,
   route,
 }: ScreenProps<"TradeDetail">) {
   const { width, fontScale } = useWindowDimensions();
+  const reducedMotion = useReducedMotion();
   const stacked = fontScale > 1.4;
   const artSize = Math.min(155, Math.max(105, (width - 114) / 1.48));
   const { trades, bottles, act } = useDemo();
@@ -49,7 +53,11 @@ export function TradeDetailScreen({
   const person = collectors[other]?.name ?? "Collector";
   const finished = trade.status === "complete",
     paused = trade.status === "paused";
-  const accepted = trade.status === "in-progress" || finished;
+  const accepted = [trade.proposerId, trade.recipientId].every((id) =>
+    trade.acceptedBy.includes(id),
+  );
+  const reserved =
+    a.reservedTradeId === trade.id && b.reservedTradeId === trade.id;
   const received = trade.receivedBy.includes("you"),
     otherReceived = trade.receivedBy.includes(other);
   const action = (kind: "accept" | "receive" | "pause", actor = "you") => {
@@ -125,9 +133,11 @@ export function TradeDetailScreen({
                 : "Waiting for mutual acceptance"
             }
             detail={
-              accepted
-                ? "Both bottles reserved for this swap."
-                : "Your offer is accepted on your side."
+              finished
+                ? "Exchange completed. Bottles transferred."
+                : accepted
+                  ? "Both bottles reserved for this swap."
+                  : "Your offer is accepted on your side."
             }
           />
           <Step
@@ -167,7 +177,9 @@ export function TradeDetailScreen({
             {finished
               ? `${b.name} is now on your shelf. ${a.name} moved to ${person}’s sample shelf.`
               : paused
-                ? "A problem was reported. This demo trade stays paused and reserved until you reset it."
+                ? reserved
+                  ? "A problem was reported. This demo trade stays paused and reserved until you reset it."
+                  : "A problem was reported. This offer stays paused until you reset it. No bottles have been reserved."
                 : "Bottles move shelves only after both collectors confirm receipt. Accepting the offer alone does not transfer ownership."}
           </Text>
         </View>
@@ -267,31 +279,36 @@ export function TradeDetailScreen({
       <Modal
         transparent
         visible={confirm}
-        animationType="fade"
+        animationType={reducedMotion ? "none" : "fade"}
         onRequestClose={() => setConfirm(false)}
       >
-        <View style={s.overlay}>
+        <SafeAreaView style={s.overlay}>
           <View accessibilityViewIsModal style={s.dialog}>
-            <Text style={ui.section}>Bottle in hand?</Text>
-            <Text style={ui.body}>
-              Confirm you received {b.name}. When both collectors confirm, this
-              swap completes and ownership changes.
-            </Text>
-            <Button
-              title="Yes, confirm receipt"
-              variant="lime"
-              onPress={() => {
-                action("receive");
-                setConfirm(false);
-              }}
-            />
-            <Button
-              title="Not yet"
-              variant="outline"
-              onPress={() => setConfirm(false)}
-            />
+            <ScrollView
+              contentContainerStyle={s.dialogContent}
+              keyboardShouldPersistTaps="handled"
+            >
+              <Text style={ui.section}>Bottle in hand?</Text>
+              <Text style={ui.body}>
+                Confirm you received {b.name}. When both collectors confirm,
+                this swap completes and ownership changes.
+              </Text>
+              <Button
+                title="Yes, confirm receipt"
+                variant="lime"
+                onPress={() => {
+                  action("receive");
+                  setConfirm(false);
+                }}
+              />
+              <Button
+                title="Not yet"
+                variant="outline"
+                onPress={() => setConfirm(false)}
+              />
+            </ScrollView>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
     </Screen>
   );
@@ -367,8 +384,13 @@ const s = StyleSheet.create({
   },
   dialog: {
     backgroundColor: colors.ivory,
-    padding: 24,
     borderRadius: 24,
+    maxHeight: "90%",
+    width: "100%",
+    overflow: "hidden",
+  },
+  dialogContent: {
+    padding: 24,
     gap: 20,
   },
 });

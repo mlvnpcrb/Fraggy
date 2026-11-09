@@ -50,6 +50,8 @@ TEST_URL=http://localhost:8081 CHROMIUM_PATH=/usr/bin/chromium node scripts/brow
 
 The smoke test covers filters, sample and original-photo adds, form validation, long names, shipping exchange, canceled receipt confirmation, one-sided receipt, ownership completion, local meetup, pause and reset. Domain tests exercise authorization, reservations and idempotency. Tests do not imply native physical-device verification.
 
+`TEST_URL=http://localhost:8081 node scripts/accessibility-smoke.cjs` additionally checks the receipt dialog with 3× browser text scaling and acceptance history after pausing. This is a layout stress test, not a replacement for native Dynamic Type testing.
+
 ## Project map
 
 - `src/theme.ts`: visual tokens.

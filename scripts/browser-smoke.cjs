@@ -9,10 +9,11 @@ async function run() {
     headless: true,
     args: ["--no-sandbox"],
   });
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const page = await browser.newPage({
+    viewport: { width: Number(process.env.TEST_WIDTH) || 390, height: 844 },
+  });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  const text = () => page.locator("body").innerText();
   const button = (name) => page.getByRole("button", { name, exact: true });
   const tab = (name) => page.getByRole("tab", { name: new RegExp(name) });
   await page.goto(process.env.TEST_URL || "http://localhost:8081", {
@@ -48,6 +49,20 @@ async function run() {
     .waitFor();
 
   await button("Add a bottle").click();
+  await page.getByLabel("Brand", { exact: true }).fill("Personal");
+  await page.getByLabel("Fragrance name", { exact: true }).fill("Draft bottle");
+  const canceledChooser = page.waitForEvent("filechooser");
+  await button("Choose photo").click();
+  await (await canceledChooser).setFiles([]);
+  await button("Choose photo").waitFor();
+  assert.equal(
+    await page.getByLabel("Fragrance name", { exact: true }).inputValue(),
+    "Draft bottle",
+  );
+  assert.equal(
+    await page.getByText("YOUR ORIGINAL PHOTO", { exact: true }).count(),
+    0,
+  );
   const chooser = page.waitForEvent("filechooser");
   await button("Choose photo").click();
   await (await chooser).setFiles(path.resolve("artifacts/shelf.png"));
