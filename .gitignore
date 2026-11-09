@@ -1,0 +1,9 @@
+node_modules/
+.expo/
+dist/
+.superpowers/
+.venv/
+.env*
+!.env.example
+*.log
+artifacts/
