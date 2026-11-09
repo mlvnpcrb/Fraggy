@@ -1,37 +1,33 @@
-# Expo prototype verification
+# Fraggy shelf and photo-cutout verification
 
-## Implemented
+## Current behavior
 
-- Four native tabs and bottle/detail/add/trade navigation.
-- Approved green/ivory/lime design, bundled Manrope fonts, original SVG bottle illustrations, reduced-motion handling and optional haptics.
-- Local photo selection/camera entry, editable bottle details and original-photo labeling. Sample cutouts are explicitly demonstrations.
-- Discover filters, proposal validation, both-participant acceptance, bottle reservations and both-receipt ownership transfer. Local and shipped sample exchanges.
-- Confirmation dialog, pause/problem state, illustrative chat/exchange details, and reset.
+The collection is now a continuous green cabinet with three or more shared shelf rows, warm lighting, substantial shelf fronts, upright bottle cutouts, contact shadows and empty add slots. The previous individual-card collection has been replaced.
 
-## Passing checks
+Taking/selecting a photo automatically sends a resized JPEG to the local processor. Actual U2NetP CPU inference removes its background, crops the detected foreground with a small transparent margin, and returns a PNG. The app previews the processed image and preserves its aspect ratio and base alignment when placing it on the shelf. Failed processing retains the original for retry and prevents adding it as a completed cutout. Sample illustrations are not substituted for user uploads.
 
-- `npm run typecheck`.
-- `npm test`: 19 domain cases across two files.
-- Browser smoke: 390px initial check and 320px final full flow. Filters, original photo upload, canceled file selection with retained draft, sample add, invalid amounts, long names, shipping exchange, canceled receipt dialog, one-sided receipt, ownership transfer, local meetup, pause, reset. No page errors or horizontal overflow.
-- Accessibility regression: 375×667 with 3× browser text scaling; both receipt buttons reachable by scrolling. Accepted trade retains acceptance after pause; proposed pause correctly says no reservation.
-- `expo install --check` with offline SDK-bundled metadata: dependencies up to date. Online check blocked by proxy, so remote compatibility is not established.
-- iOS development bundle: HTTP 200.
-- Production iOS export: successful, 2.7 MB Hermes bundle plus bundled font/navigation assets.
+## Evidence
 
-## Independent review
+- TypeScript checks pass.
+- 24 JS domain/config tests pass: existing collection/trade cases plus processor LAN/explicit URL/tunnel configuration cases.
+- Five Python checks pass, including real model inference yielding a cropped RGBA PNG with transparent corners, corrupt/oversized input rejection, and an actual HTTP upload/processing response. The test image is a generated bottle image, not a user photo.
+- Browser flow at 320px: photo chooser cancellation retains the draft; automatic removal handles a simulated HTML 503 with a clear error; original photo cannot be added before processing; retry hits the real local CPU model; processed PNG is added to the shelf. Collection filters and shipping/local swap, cancellation, both receipt confirmations, pause and reset also pass.
+- Header layout regression at 320px and 2× browser text passes. Receipt modal regression at 375×667 and 3× browser text passes. These stress tests do not establish native Dynamic Type behavior.
+- Current production iOS export succeeds with the added Expo image-manipulator and constants dependencies.
+- Visual screenshots: `fraggy-digital-shelves.png`, `fraggy-cutout-preview.png`, `fraggy-photo-on-shelf.png` in the workspace. Browser rendering is not physical-device verification.
 
-A fresh reviewer independently reran typecheck and the domain suite. Their material finding was inaccessible receipt controls at large text sizes. A regression reproduced it with Confirm below the viewport at y=658–862; the dialog now has constrained height and scrollable contents, and the regression passes. The paused-state acceptance display and reduced-motion modal behavior were also corrected in the same pass. No findings were deferred.
+## Independent review and fixes
 
-## Implementation decisions
+Fresh review found no critical or important issue for the local prototype. Two minor issues were reproduced failing and fixed: shelf header overflow under larger text, and raw JSON parsing errors from non-JSON gateway failures. Their browser regressions now pass. No findings are deferred.
 
-- Used the existing `work` branch in the shared workspace, preserving prior design files.
-- Used npm's SDK 58 template and its native dependency map. The cloud npm/Expo caches were redirected to writable temporary folders.
-- Integrated dependent screens and domain code into one feature commit to avoid broken navigation imports in intermediate commits. Tests were run failing before the domain implementation, then passed.
-- Used bundled procedural SVG illustrations for sample bottles; real photo upload keeps its original background.
-- Used the documented local launch fallback after both cloud tunnel methods failed. Signed Expo tunnel needs login; ngrok timed out. The prototype does not claim an externally reachable QR.
+## Research
 
-## Still needs device verification
+The original cabinet composition draws on the shared visual features of [illuminated glass perfume shelving](https://rtdisplay.com/product/light-oak-led-lighted-perfume-display-cabinet-4-glass-shelves-fragrance-shop/) and [boutique fragrance displays](https://xtraitperfumery.com/). See `docs/shelf-redesign.md` for the revised design authority.
 
-Physical iPhone execution, native Camera/Photos permission prompts and denial behavior, actual Dynamic Type, VoiceOver, keyboard/safe-area behavior and haptics. Browser tests and successful native compilation do not establish these.
+## Remaining limits
 
-To test on a phone, follow README.md on a Mac/PC with Expo Go SDK 58 support and a reachable LAN or authenticated tunnel. Backend users, actual cutout processing, persistence and live trading remain outside this prototype.
+The cutout server must be running and reachable from the phone. Expo LAN can use the same computer's port 8787; a Metro-only tunnel does not expose the processor. The workspace still has no external-phone Expo tunnel. No usable external QR or physical iPhone testing is claimed.
+
+Camera permission behavior, native Dynamic Type, VoiceOver, keyboard/safe areas and haptics need an iPhone check. Broad cutout quality across real transparent-glass bottles, hands, reflections and busy backgrounds is not established by the test fixture. The preview and retake flow supports reviewing those results.
+
+Photos are processed on the configured computer, not a paid image API, and uploads are closed without retention there. The resulting cutout lives in the app's session-local collection; restarting resets the prototype. Real accounts, live trading, chat, shipping and durable storage remain outside scope.

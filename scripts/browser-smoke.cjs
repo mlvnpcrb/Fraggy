@@ -64,9 +64,35 @@ async function run() {
     0,
   );
   const chooser = page.waitForEvent("filechooser");
+  await page.route("**/cutout", (route) =>
+    route.fulfill({
+      status: 503,
+      headers: {
+        "content-type": "application/json",
+        "access-control-allow-origin": "*",
+      },
+      body: "<html><body>Bad gateway</body></html>",
+    }),
+  );
   await button("Choose photo").click();
-  await (await chooser).setFiles(path.resolve("artifacts/shelf.png"));
+  await (
+    await chooser
+  ).setFiles(path.resolve("server/fixtures/bottle-photo.png"));
   await page.getByText("YOUR ORIGINAL PHOTO", { exact: true }).waitFor();
+  await page.getByRole("alert").waitFor();
+  assert.match(await page.getByRole("alert").innerText(), /photo processor/i);
+  await page.unroute("**/cutout");
+  await button("Add to my shelf  +").click();
+  await page
+    .getByText(
+      "Remove the background before adding this bottle to your shelf.",
+      { exact: true },
+    )
+    .waitFor();
+  await button("Remove background").click();
+  await page
+    .getByText("BACKGROUND REMOVED", { exact: true })
+    .waitFor({ timeout: 120000 });
   await page.getByLabel("Brand", { exact: true }).fill("Personal");
   const longName = "A fragrance with a very long collector edition name";
   await page.getByLabel("Fragrance name", { exact: true }).fill(longName);
@@ -75,7 +101,7 @@ async function run() {
     .getByText("7 BOTTLES. ENDLESS POSSIBILITIES.", { exact: true })
     .waitFor();
   await button(`View ${longName}`).click();
-  await page.getByText("ORIGINAL PHOTO", { exact: true }).waitFor();
+  await page.getByText("BACKGROUND REMOVED", { exact: true }).waitFor();
   await button("Go back").click();
 
   await tab("Discover").click();

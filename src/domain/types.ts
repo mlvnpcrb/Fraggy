@@ -7,7 +7,9 @@ export type Bottle = {
   sizeMl: number;
   remainingPercent: number;
   imageUri?: string;
-  imageKind: "original" | "sample-cutout";
+  imageKind: "original" | "sample-cutout" | "cutout";
+  imageWidth?: number;
+  imageHeight?: number;
   tradeAvailable: boolean;
   reservedTradeId?: string;
   art: "amber" | "blue" | "rose" | "green";

@@ -11,7 +11,7 @@ export function addBottle(input: BottleInput): Bottle {
     input.remainingPercent > 100
   )
     throw new Error("Remaining amount must be between 0 and 100%.");
-  if (input.imageKind === "original" && !input.imageUri)
+  if (input.imageKind !== "sample-cutout" && !input.imageUri)
     throw new Error("Choose a bottle photo first.");
   return {
     ...input,

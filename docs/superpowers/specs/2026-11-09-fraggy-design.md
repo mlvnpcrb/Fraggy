@@ -2,6 +2,8 @@
 
 Status: Approved direction — clean and cool, with playful moments.
 
+**Collection/capture update:** The user's shelf correction supersedes the card layout and simulated background-removal scope below. See [the current shelf design](../../shelf-redesign.md): continuous cabinet shelves and real local CPU photo removal are implemented. Trading scope remains as described here.
+
 ## Intent
 
 Fraggy is a mobile app for fragrance collectors. Its signature is green and its experience should feel luxurious and expensive. Users photograph bottles for a digital shelf and exchange bottles locally or by shipping. There are no payments in the first version.

@@ -13,22 +13,41 @@ import type { Bottle as BottleType } from "../domain/types";
 export function Bottle({
   bottle,
   size = 170,
+  alignBase = false,
 }: {
   bottle: BottleType;
   size?: number;
+  alignBase?: boolean;
 }) {
   const id = useId().replace(/:/g, "");
   const glass = `g${id}`,
     cap = `c${id}`;
-  if (bottle.imageUri)
+  if (bottle.imageUri) {
+    const width = size * 0.74;
+    const ratio =
+      bottle.imageWidth && bottle.imageHeight
+        ? bottle.imageWidth / bottle.imageHeight
+        : 0.74;
+    const imageWidth = Math.min(width, size * ratio),
+      imageHeight = Math.min(size, width / ratio);
     return (
-      <Image
-        accessibilityLabel={`${bottle.name}, original photo`}
-        source={{ uri: bottle.imageUri }}
-        style={{ width: size * 0.74, height: size }}
-        resizeMode="contain"
-      />
+      <View
+        style={{
+          width,
+          height: size,
+          justifyContent: "flex-end",
+          alignItems: "center",
+        }}
+      >
+        <Image
+          accessibilityLabel={`${bottle.name}, ${bottle.imageKind === "cutout" ? "background removed" : "original photo"}`}
+          source={{ uri: bottle.imageUri }}
+          style={{ width: imageWidth, height: imageHeight }}
+          resizeMode="contain"
+        />
+      </View>
     );
+  }
   const blue = bottle.art === "blue",
     green = bottle.art === "green",
     rose = bottle.art === "rose";
@@ -45,7 +64,12 @@ export function Bottle({
       accessibilityLabel={`${bottle.name}, illustrated sample bottle`}
       style={{ width: size * 0.74, height: size }}
     >
-      <Svg width="100%" height="100%" viewBox="0 0 160 220">
+      <Svg
+        width="100%"
+        height="100%"
+        viewBox={alignBase ? "0 0 160 204" : "0 0 160 220"}
+        preserveAspectRatio={alignBase ? "none" : "xMidYMid meet"}
+      >
         <Defs>
           <LinearGradient id={glass} x1="0" y1="0" x2="1" y2="0">
             <Stop offset="0" stopColor={tint[0]} />

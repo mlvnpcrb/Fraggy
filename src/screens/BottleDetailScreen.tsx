@@ -63,9 +63,11 @@ export function BottleDetailScreen({
             <Bottle bottle={bottle} size={280} />
           </View>
           <Text style={s.artLabel}>
-            {bottle.imageKind === "original"
-              ? "ORIGINAL PHOTO"
-              : "ILLUSTRATED SAMPLE"}
+            {bottle.imageKind === "cutout"
+              ? "BACKGROUND REMOVED"
+              : bottle.imageKind === "original"
+                ? "ORIGINAL PHOTO"
+                : "ILLUSTRATED SAMPLE"}
           </Text>
         </View>
         <Text style={ui.eyebrow}>{bottle.brand}</Text>

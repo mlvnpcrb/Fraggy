@@ -42,8 +42,9 @@ export function ProfileScreen() {
           <Text style={ui.name}>Made for a test drive.</Text>
           <Text style={[ui.body, { marginTop: 10 }]}>
             This is Fraggy’s local prototype. Collectors, chat, and delivery
-            details are samples. Photos stay on your device. Your session resets
-            when the app restarts.
+            details are samples. Background removal sends your photo to the
+            processor on your computer without saving the upload there. Your
+            session resets when the app restarts.
           </Text>
         </View>
         {confirm ? (

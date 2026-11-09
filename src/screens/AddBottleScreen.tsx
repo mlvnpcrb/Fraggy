@@ -8,6 +8,7 @@ import {
   Text,
   TextInput,
   View,
+  ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as Haptics from "expo-haptics";
@@ -20,6 +21,7 @@ import { colors, fonts } from "../theme";
 import { useDemo } from "../state/DemoProvider";
 import { createDemo } from "../data/demo";
 import type { ScreenProps } from "../navigation";
+import { removeBottleBackground, type Cutout } from "../services/cutout";
 export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
   const { addBottle } = useDemo();
   const [uri, setUri] = useState<string>();
@@ -32,8 +34,10 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
   const [error, setError] = useState("");
   const [permission, setPermission] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [cutout, setCutout] = useState<Cutout>();
+  const [removing, setRemoving] = useState(false);
   const pick = async (camera: boolean) => {
-    if (busy) return;
+    if (busy || removing) return;
     setBusy(true);
     setError("");
     setPermission(false);
@@ -69,6 +73,8 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
       if (!result.canceled && result.assets[0]) {
         setUri(result.assets[0].uri);
         setSample(false);
+        setCutout(undefined);
+        await removeBackground(result.assets[0].uri);
       }
     } catch {
       setError(
@@ -80,9 +86,29 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
   };
   const sampleBottle = createDemo().bottles[0];
   const image = uri || sample;
+  const removeBackground = async (source = uri) => {
+    if (!source || removing) return;
+    setRemoving(true);
+    setError("");
+    try {
+      setCutout(await removeBottleBackground(source));
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Could not remove the background. Please retry.",
+      );
+    } finally {
+      setRemoving(false);
+    }
+  };
   const save = () => {
     try {
       if (!image) throw Error("Choose a photo or try the sample cutout first.");
+      if (!sample && !cutout)
+        throw Error(
+          "Remove the background before adding this bottle to your shelf.",
+        );
       if (!size.trim() || !remaining.trim())
         throw Error("Enter the bottle size and remaining amount.");
       addBottle({
@@ -90,8 +116,10 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
         name,
         sizeMl: Number(size),
         remainingPercent: Number(remaining),
-        imageKind: sample ? "sample-cutout" : "original",
-        imageUri: sample ? undefined : uri,
+        imageKind: sample ? "sample-cutout" : "cutout",
+        imageUri: cutout?.uri,
+        imageWidth: cutout?.width,
+        imageHeight: cutout?.height,
         art: "amber",
         tradeAvailable: open,
         notes: "Your personal collection",
@@ -116,18 +144,51 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
           Shelf-worthy.
         </Text>
         <Text style={ui.body}>
-          Photo first. Your next favorite, front and center.
+          Take a photo. We’ll cut out the bottle and place it on your shelf.
         </Text>
-        <View style={s.preview}>
+        <View
+          style={[
+            s.preview,
+            cutout || sample ? { backgroundColor: colors.green } : undefined,
+          ]}
+        >
+          {(cutout || sample) && (
+            <View
+              style={{
+                position: "absolute",
+                bottom: 25,
+                left: 25,
+                right: 25,
+                height: 8,
+                borderRadius: 2,
+                backgroundColor: "#829578",
+                boxShadow: "0 6px 8px #061A1577",
+              }}
+            />
+          )}
           {image ? (
             <>
               <Bottle
-                bottle={{ ...sampleBottle, imageUri: sample ? undefined : uri }}
+                bottle={{
+                  ...sampleBottle,
+                  imageUri: cutout?.uri ?? (sample ? undefined : uri),
+                  imageKind: cutout
+                    ? "cutout"
+                    : sample
+                      ? "sample-cutout"
+                      : "original",
+                  imageWidth: cutout?.width,
+                  imageHeight: cutout?.height,
+                }}
                 size={230}
               />
               <View style={s.badge}>
                 <Text style={s.badgeText}>
-                  {sample ? "SAMPLE CUTOUT · DEMO" : "YOUR ORIGINAL PHOTO"}
+                  {sample
+                    ? "SAMPLE CUTOUT · DEMO"
+                    : cutout
+                      ? "BACKGROUND REMOVED"
+                      : "YOUR ORIGINAL PHOTO"}
                 </Text>
               </View>
             </>
@@ -143,11 +204,30 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
             </>
           )}
         </View>
+        {!!uri && !cutout && (
+          <Button
+            title={removing ? "Cutting out your bottle…" : "Remove background"}
+            variant="lime"
+            disabled={removing}
+            onPress={() => {
+              void removeBackground();
+            }}
+          />
+        )}
+        {removing && (
+          <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+            <ActivityIndicator color={colors.green} />
+            <Text style={[ui.small, { flex: 1 }]}>
+              Finding the bottle’s edges. Your first cutout may take a little
+              longer.
+            </Text>
+          </View>
+        )}
         <View style={{ flexDirection: "row", gap: 10 }}>
           <Button
             style={{ flex: 1 }}
             title={busy ? "Opening…" : "Choose photo"}
-            disabled={busy}
+            disabled={busy || removing}
             onPress={() => {
               void pick(false);
             }}
@@ -156,7 +236,7 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
             style={{ flex: 1 }}
             title="Camera"
             variant="outline"
-            disabled={busy}
+            disabled={busy || removing}
             onPress={() => {
               void pick(true);
             }}
@@ -164,9 +244,11 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
         </View>
         <Pressable
           accessibilityRole="button"
+          disabled={removing}
           onPress={() => {
             setSample(true);
             setUri(undefined);
+            setCutout(undefined);
             setBrand("Le Labo");
             setName("Santal 33");
             setError("");
@@ -186,8 +268,10 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
         </Pressable>
         <Text style={ui.small}>
           {sample
-            ? "This illustrated cutout previews the future background-removal experience."
-            : "Your photo stays on this device. Automatic background removal is coming later."}
+            ? "A sample bottle for exploring your shelves. Choose your own photo to try real background removal."
+            : cutout
+              ? "Background removed. Check the edges before placing your bottle. Choose another photo to retake it."
+              : "Taking or choosing a photo sends it to the Fraggy processor on your computer to remove its background. The upload is not saved there. Use a plain background and keep hands out of frame."}
         </Text>
         <View style={{ gap: 17 }}>
           <Field
@@ -264,11 +348,11 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
         <Button
           title="Add to my shelf  +"
           variant="lime"
-          disabled={busy}
+          disabled={busy || removing}
           onPress={save}
         />
         <Text style={[ui.small, { textAlign: "center" }]}>
-          LOCAL PROTOTYPE · NOTHING IS UPLOADED
+          PHOTO → CUTOUT → YOUR DIGITAL SHELF
         </Text>
       </View>
     </Screen>

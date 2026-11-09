@@ -1,64 +1,57 @@
 # Fraggy
 
-A React Native / Expo Go prototype for fragrance collectors. Racing green, ivory, and lime; bold Manrope typography; illustrated bottles and a local trading simulation.
+A green, Gen Z luxury fragrance-collector app built with React Native and Expo. The collection is a digital perfume cabinet: continuous illuminated shelves, upright bottles, and real photo cutouts.
 
-## Test on an iPhone with Expo Go
+## Test with Expo Go on your iPhone
 
-Requires Node.js 22.13+ (or a newer supported LTS), npm, and the current **Expo Go with SDK 58 support** from the App Store. Expo SDK 58 / React Native 0.88.1 / React 19.3.0 are pinned in the lockfile. If your installed Expo Go reports an incompatible SDK, update it; do not independently upgrade React Native packages.
+Requires Node 22.13+ or supported newer LTS, Python 3.12+, and Expo Go with SDK 58 support.
 
-1. Download/unzip the source project on your computer and open a terminal in its folder.
-2. Run `npm ci`.
-3. Run `npx expo start --lan`.
-4. Connect the computer and iPhone to the same Wi-Fi.
-5. Scan the terminal QR with the iPhone Camera and choose **Open in Expo Go**.
+1. Download/unzip the project on a Mac or PC and run `npm ci` in its folder.
+2. In one terminal, run `npm run cutout`. First launch creates a local Python environment and installs the photo processor. Its first cutout downloads the 4.6 MB U2NetP model; later requests reuse it.
+3. In a second terminal, run `npx expo start --lan`.
+4. Keep both terminals running, connect your iPhone to the same Wi-Fi, and scan the Expo QR with the iPhone Camera. Open it in Expo Go.
+5. Tap + or an empty shelf slot, take/choose a photo, let Fraggy remove its background automatically, review the actual transparent cutout, fill bottle details, and add it to your shelf.
 
-If the devices cannot reach each other over Wi-Fi, use `npx expo login` followed by `npx expo start --tunnel`. Alternatively, `npx expo start --tunnel ngrok` selects Expo's ngrok adapter (included as a dev dependency). The computer and development server must stay running.
+The app derives the processor address from the Expo LAN computer. If needed, set `EXPO_PUBLIC_CUTOUT_URL=http://YOUR_COMPUTER_IP:8787` in `.env.local` and restart Expo. This is a public service address, not a secret. When using a Metro tunnel, the separate processor must also have a phone-reachable address; a tunnel to Expo alone does not expose it.
 
-**Cloud handoff limitation:** This workspace successfully compiled the SDK 58 iOS manifest and bundle, but did not obtain a phone-accessible tunnel. The signed tunnel requires Expo login, and the ngrok alternative timed out. No QR from this cloud workspace is currently usable on an external iPhone. Localhost links are only for workspace/browser testing. Physical-device testing is still needed.
+**Cloud limitation:** the app and processor run in this workspace and the iOS bundle compiles, but there is no external-phone tunnel. Signed Expo tunnels require login and the ngrok alternative timed out. No remote QR or physical iPhone test is claimed. Use the local computer setup above.
 
-## Try these flows
+## Photo cutouts
 
-- **My Shelf:** filter all bottles/open to swap, inspect bottles, then tap +.
-- **Add a Bottle:** choose a photo or use the camera; enter details and add it. Original photos stay local and are **not** presented as background-removed. “Try a sample cutout” loads an explicitly illustrated demonstration.
-- **Discover:** choose Mojave Ghost, select Shipping, offer Santal 33, and propose the swap.
-- **Trade:** simulate Alex accepting, confirm your receipt, then simulate Alex receiving. Ownership transfers only when both receipts exist; check your shelf afterward.
-- **Local meetup:** open the existing Jazz Club ↔ Hwyl trade and simulate Sam accepting. Report a problem to pause it and keep bottles reserved.
-- **Profile:** reset the demo to restore the original collection.
+The app sends a resized JPEG when you choose or take a photo, to the Fraggy processor on your computer. It runs local CPU segmentation using [rembg](https://github.com/danielgatis/rembg), returns a tightly cropped transparent PNG, and closes the uploaded temporary file. No third-party image API, paid key, or retained upload is involved. The app stores the resulting cutout in its session-local collection.
 
-## Scope
+Use one upright bottle against a contrasting plain background, with the cap and base visible and no hands in frame. Clear glass, reflections, and busy backgrounds can affect cutout quality. Review the preview and retake if needed. Failed processing never silently adds an original photo as a successful cutout.
 
-This is a session-local prototype. It has no real accounts, background-removal service, backend, chat, shipment tracking, payments, or live trades. Reloading/restarting resets the sample state; added photos are not persisted across sessions. All bottles are original illustrations, not product photography. Camera/library permissions and haptics need an iPhone check. Expo Go uses its own native permission descriptions; app-specific permission copy applies in a custom development/standalone build.
+The processor is a local development companion; production hosting and persistent photo storage are separate work. Sample bottles remain clearly illustrated and sample collectors/trades are simulated.
 
-## Developer checks
+## Shelf and trade flows
+
+- Continuous green cabinet shelves with shared ledges, contact shadows and empty places to add bottles. Tap a bottle for details.
+- Discover available bottles and propose a local or shipped exchange using a bottle from your shelf.
+- Simulate the other collector accepting and receiving. Both must accept; ownership moves only after both confirm receipt. Repeated confirmations are idempotent.
+- Report a problem to pause an exchange. Reset the collection from Profile.
+
+No payments, real users, live chat, tracking, or durable persistence are connected. Restarting the app resets the demo collection and discards session-added cutouts.
+
+## Checks
 
 ```sh
 npm run typecheck
 npm test
 npx expo install --check
-npm run web
+# Python checks, after installing pytest and httpx into the cutout environment:
+python -m pytest server -q
 ```
 
-The online Expo dependency check was blocked by cloud network policy. The offline check against the SDK-bundled dependency map passes, but does not establish the latest remote Expo Go availability.
-
-An optional browser smoke test uses Playwright and a Chromium installation:
+Optional browser verification requires Playwright and Chromium. Start the web preview and processor, then run:
 
 ```sh
-npm install --no-save playwright
-# Start the web server separately, then:
-TEST_URL=http://localhost:8081 CHROMIUM_PATH=/usr/bin/chromium node scripts/browser-smoke.cjs
+TEST_URL=http://localhost:8081 node scripts/browser-smoke.cjs
+TEST_URL=http://localhost:8081 node scripts/accessibility-smoke.cjs
 ```
 
-The smoke test covers filters, sample and original-photo adds, form validation, long names, shipping exchange, canceled receipt confirmation, one-sided receipt, ownership completion, local meetup, pause and reset. Domain tests exercise authorization, reservations and idempotency. Tests do not imply native physical-device verification.
+The browser smoke test performs a real photo upload → CPU inference → cutout preview → shelf placement, plus collection filters and swap completion/pause/reset. The accessibility regression exercises the receipt dialog at 3× browser text. Native camera permission, haptics, VoiceOver and Dynamic Type still require device verification.
 
-`TEST_URL=http://localhost:8081 node scripts/accessibility-smoke.cjs` additionally checks the receipt dialog with 3× browser text scaling and acceptance history after pausing. This is a layout stress test, not a replacement for native Dynamic Type testing.
+## Design references
 
-## Project map
-
-- `src/theme.ts`: visual tokens.
-- `src/components`: native UI primitives, bottle artwork, reduced-motion handling.
-- `src/screens`: shelf, capture, discovery, trade and profile flows.
-- `src/domain`: validated immutable collection/trade transitions and tests.
-- `src/state/DemoProvider.tsx`: session-local demo state.
-- `docs/superpowers`: approved design and implementation plan.
-
-No keys, secrets, or external services are needed to run this prototype.
+See [shelf research and redesign](docs/shelf-redesign.md), the [design spec](docs/superpowers/specs/2026-11-09-fraggy-design.md), and [verification report](docs/verification.md). The shelf correction supersedes the original card-grid and simulated-removal scope.

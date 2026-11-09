@@ -9,3 +9,7 @@ dist/
 artifacts/
 /fraggy-*.png
 /fraggy-expo-prototype.zip
+server/models/
+.cutout-venv/
+__pycache__/
+.pytest_cache/
