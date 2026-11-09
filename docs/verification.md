@@ -1,5 +1,11 @@
 # Fraggy shelf and photo-cutout verification
 
+## Expo native photo upload compatibility fix
+
+The user's iPhone reported `Unsupported FormDataPart implementation`. This was traced to the native branch appending the old React Native `{ uri, name, type }` object. Expo SDK 58's multipart converter rejects that object. Native upload now uses `File` from `expo-file-system` with `fetch` from `expo/fetch`, matching the SDK documentation. Browser upload still uses a real Blob.
+
+A regression using Expo's actual `convertFormDataAsync` reproduced the exact error before the fix. It now verifies filename, MIME header and byte-for-byte image payload through the encoder. All 25 JS tests, TypeScript, the real automatic-cutout browser smoke and iOS export pass. This corrects the compatibility defect; it does not claim physical-device testing. The Mac patch includes the dependency and lockfile, so `npm ci` and an Expo restart are needed.
+
 ## Automatic capture clarification
 
 Photo selection/capture starts removal immediately. There is no Remove background choice. During processing the app shows automatic progress; Retry cutout appears only when that attempt fails, and adding an unprocessed photo is disabled. `scripts/automatic-cutout-smoke.cjs` verifies automatic inference without a second click, placement of the result, failure-only retry, and blocked unprocessed Add. This regression failed against the former optional-looking button, then passed after the UI correction. TypeScript also passes.

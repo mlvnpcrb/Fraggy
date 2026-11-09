@@ -1,7 +1,10 @@
 import { Platform } from "react-native";
 import Constants from "expo-constants";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import { File } from "expo-file-system";
+import { fetch } from "expo/fetch";
 import { cutoutServerUrl } from "./cutoutConfig";
+import { appendNativePhoto } from "./nativePhotoUpload";
 export type Cutout = { uri: string; width: number; height: number };
 export function processorUrl() {
   return cutoutServerUrl(
@@ -22,12 +25,7 @@ export async function removeBottleBackground(uri: string): Promise<Cutout> {
   if (Platform.OS === "web") {
     const response = await fetch(photo.uri);
     body.append("file", await response.blob(), "bottle.jpg");
-  } else
-    body.append("file", {
-      uri: photo.uri,
-      name: "bottle.jpg",
-      type: "image/jpeg",
-    } as unknown as Blob);
+  } else appendNativePhoto(body, photo.uri, File);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 120000);
   try {

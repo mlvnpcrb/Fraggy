@@ -1,6 +1,6 @@
 {
   "name": "fraggy",
-  "description": "Fraggy \u2014 a Gen Z luxury fragrance collection and swap prototype",
+  "description": "Fraggy — a Gen Z luxury fragrance collection and swap prototype",
   "license": "UNLICENSED",
   "version": "0.1.0",
   "main": "index.ts",
@@ -12,6 +12,7 @@
     "@react-navigation/native-stack": "^7.21.0",
     "expo": "~58.0.23",
     "expo-constants": "~58.0.15",
+    "expo-file-system": "~58.0.13",
     "expo-font": "~58.0.11",
     "expo-haptics": "~58.0.7",
     "expo-image-manipulator": "~58.0.16",
