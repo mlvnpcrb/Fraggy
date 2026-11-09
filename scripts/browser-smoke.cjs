@@ -82,14 +82,8 @@ async function run() {
   await page.getByRole("alert").waitFor();
   assert.match(await page.getByRole("alert").innerText(), /photo processor/i);
   await page.unroute("**/cutout");
-  await button("Add to my shelf  +").click();
-  await page
-    .getByText(
-      "Remove the background before adding this bottle to your shelf.",
-      { exact: true },
-    )
-    .waitFor();
-  await button("Remove background").click();
+  assert.equal(await button("Add to my shelf  +").isDisabled(), true);
+  await button("Retry cutout").click();
   await page
     .getByText("BACKGROUND REMOVED", { exact: true })
     .waitFor({ timeout: 120000 });

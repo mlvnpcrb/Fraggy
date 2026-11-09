@@ -9,6 +9,7 @@ dist/
 artifacts/
 /fraggy-*.png
 /fraggy-expo-prototype.zip
+/fraggy-auto-cutout-update.zip
 server/models/
 .cutout-venv/
 __pycache__/

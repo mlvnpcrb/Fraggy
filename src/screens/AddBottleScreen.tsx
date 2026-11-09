@@ -107,7 +107,7 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
       if (!image) throw Error("Choose a photo or try the sample cutout first.");
       if (!sample && !cutout)
         throw Error(
-          "Remove the background before adding this bottle to your shelf.",
+          "Your bottle cutout is not ready. Retry processing or choose another photo.",
         );
       if (!size.trim() || !remaining.trim())
         throw Error("Enter the bottle size and remaining amount.");
@@ -204,11 +204,10 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
             </>
           )}
         </View>
-        {!!uri && !cutout && (
+        {!!uri && !cutout && !removing && !!error && (
           <Button
-            title={removing ? "Cutting out your bottle…" : "Remove background"}
+            title="Retry cutout"
             variant="lime"
-            disabled={removing}
             onPress={() => {
               void removeBackground();
             }}
@@ -218,8 +217,8 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
           <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
             <ActivityIndicator color={colors.green} />
             <Text style={[ui.small, { flex: 1 }]}>
-              Finding the bottle’s edges. Your first cutout may take a little
-              longer.
+              Cutting out your bottle automatically. Your first cutout may take
+              a little longer.
             </Text>
           </View>
         )}
@@ -348,7 +347,7 @@ export function AddBottleScreen({ navigation }: ScreenProps<"AddBottle">) {
         <Button
           title="Add to my shelf  +"
           variant="lime"
-          disabled={busy || removing}
+          disabled={busy || removing || (Boolean(uri) && !cutout)}
           onPress={save}
         />
         <Text style={[ui.small, { textAlign: "center" }]}>

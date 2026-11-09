@@ -1,5 +1,9 @@
 # Fraggy shelf and photo-cutout verification
 
+## Automatic capture clarification
+
+Photo selection/capture starts removal immediately. There is no Remove background choice. During processing the app shows automatic progress; Retry cutout appears only when that attempt fails, and adding an unprocessed photo is disabled. `scripts/automatic-cutout-smoke.cjs` verifies automatic inference without a second click, placement of the result, failure-only retry, and blocked unprocessed Add. This regression failed against the former optional-looking button, then passed after the UI correction. TypeScript also passes.
+
 ## Current behavior
 
 The collection is now a continuous green cabinet with three or more shared shelf rows, warm lighting, substantial shelf fronts, upright bottle cutouts, contact shadows and empty add slots. The previous individual-card collection has been replaced.
