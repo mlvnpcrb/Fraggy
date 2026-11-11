@@ -3,9 +3,15 @@
 const { spawnSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
+const os = require("node:os");
 process.chdir(path.resolve(__dirname, ".."));
 const executable = process.platform === "win32" ? "npx.cmd" : "npx";
-const env = { ...process.env, EXPO_PUBLIC_DEMO_MODE: "false" };
+const env = {
+  ...process.env,
+  EXPO_PUBLIC_DEMO_MODE: "false",
+  npm_config_cache:
+    process.env.FRAGGY_NPM_CACHE || path.join(os.homedir(), ".npm-fraggy"),
+};
 function run(args, options = {}) {
   const result = spawnSync(executable, ["--yes", "eas-cli@latest", ...args], {
     stdio: "inherit",
