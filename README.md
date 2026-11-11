@@ -2,6 +2,8 @@
 
 A private mobile fragrance cabinet for Philippine collectors. Racing green, ivory, restrained lime, and upright bottles on continuous illuminated shelves.
 
+The authoritative redesign specification is [design.md](design.md): research-backed UI/UX rules, screen wireframes and states, visual tokens, demo/live boundaries, and acceptance checks. It describes the approved target; it does not claim those screens or the planned `admin/admin` demo login are already implemented. Earlier visual specifications are historical.
+
 **Capture → automatic background removal → inspect the actual transparent PNG → save to a permanent shelf.** One-for-one swaps transfer ownership only after both collectors separately confirm receipt. No payments or cash top-ups.
 
 ## Private beta implementation

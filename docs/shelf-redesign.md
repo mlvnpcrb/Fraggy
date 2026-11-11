@@ -1,5 +1,7 @@
 # Fraggy — the digital perfume cabinet
 
+> **Historical specification.** The current UI/UX authority is [design.md](../design.md). This document records an earlier cabinet/local-processor iteration; its local-server instructions are not the current hosted beta architecture. See the [private beta plan](private-beta-plan.md) for live business and backend rules.
+
 The user's correction supersedes the earlier card-grid and simulated-removal prototype scope. The core experience is **take a bottle photo → remove its background → place the actual cutout on a continuous digital shelf**. Preserve the approved green, youthful luxury identity and existing swap flows.
 
 ## Research and visual translation

@@ -1,6 +1,8 @@
 # Fraggy — Gen Z Luxury
 
-Status: Approved direction — clean and cool, with playful moments.
+> **Historical specification.** The authoritative redesign is [design.md](../../../design.md), covering the approved Luxury Gen Z demo and live app. Prototype-only scope, local processing and simulated interactions below describe the earlier iteration. Current business/backend requirements are in the [private beta plan](../../private-beta-plan.md).
+
+Historical status: Approved direction for the earlier prototype — clean and cool, with playful moments.
 
 **Collection/capture update:** The user's shelf correction supersedes the card layout and simulated background-removal scope below. See [the current shelf design](../../shelf-redesign.md): continuous cabinet shelves and real local CPU photo removal are implemented. Trading scope remains as described here.
 
