@@ -1,0 +1,12 @@
+{
+  "captured_before_beta": true,
+  "profile_stats": {
+    "kind": "view",
+    "definition": "select p.id,(select count(*) from public.bottles b where b.owner_id=p.id) as bottles_count,(select count(*) from public.follows f where f.followee_id=p.id) as followers_count,(select count(*) from public.follows f where f.follower_id=p.id) as following_count,(select round(avg(v.rating),1) from public.reviews v where v.reviewee_id=p.id) as rating from public.profiles p"
+  },
+  "non_constraint_indexes": [
+    "CREATE INDEX bottles_owner_idx ON public.bottles USING btree (owner_id)",
+    "CREATE INDEX bottles_swappable_idx ON public.bottles USING btree (trade_available) WHERE trade_available",
+    "CREATE INDEX trade_messages_trade_idx ON public.trade_messages USING btree (trade_id, sent_at)"
+  ]
+}

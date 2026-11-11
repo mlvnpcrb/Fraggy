@@ -37,7 +37,7 @@ alter table public.bottles add column version integer not null default 1;
 alter table public.bottles add column archived boolean not null default false;
 alter table public.bottles add column suspended boolean not null default false;
 alter table public.bottles add column updated_at timestamptz not null default now();
-create index bottles_owner_idx on public.bottles(owner_id,shelf_id,position);
+create index beta_bottles_shelf_idx on public.bottles(owner_id,shelf_id,position);
 create index bottles_listing_idx on public.bottles(trade_available,created_at) where not archived and not suspended;
 create table public.capture_jobs(
  id uuid primary key default gen_random_uuid(),owner_id uuid not null references public.profiles(id),
@@ -72,7 +72,7 @@ create table public.notifications(
  trade_id uuid references public.trades(id),kind text not null,text text not null,read_at timestamptz,created_at timestamptz not null default now()
 );
 create index notifications_owner_idx on public.notifications(user_id,created_at desc);
-create index messages_trade_idx on public.trade_messages(trade_id,sent_at);
+-- Existing trade_messages_trade_idx supplies the same ordered lookup.
 create index blocks_reverse_idx on public.blocks(blocked_id,blocker_id);
 alter table public.reports add column trade_id uuid references public.trades(id);
 alter table public.reports add column admin_note text not null default '';

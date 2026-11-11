@@ -7,7 +7,7 @@ services:
     dockerfilePath: ./server/Dockerfile
     dockerContext: .
     healthCheckPath: /health
-    autoDeployTrigger: off
+    autoDeployTrigger: 'off'
     envVars:
       - key: FRAGGY_GATEWAY_URL
         value: https://flczhwwlvfnkqmtxpkmq.supabase.co/functions/v1/beta-gateway

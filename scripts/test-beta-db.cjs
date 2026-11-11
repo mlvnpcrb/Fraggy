@@ -46,6 +46,7 @@ create table storage.objects(id uuid primary key default gen_random_uuid(),bucke
     await db.query(
       fs.readFileSync(path.join("supabase/migrations", file), "utf8"),
     );
+    if(file.includes('baseline_adoption'))await db.query('create index if not exists bottles_owner_idx on public.bottles(owner_id)');
   }
   const A = "00000000-0000-4000-8000-000000000001",
     B = "00000000-0000-4000-8000-000000000002",

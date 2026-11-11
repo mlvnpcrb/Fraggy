@@ -10,4 +10,4 @@ COPY server server
 RUN --mount=type=secret,id=proxy_ca,required=false \
     if [ -f /run/secrets/proxy_ca ]; then export REQUESTS_CA_BUNDLE=/run/secrets/proxy_ca SSL_CERT_FILE=/run/secrets/proxy_ca; fi; \
     FRAGGY_MODEL_DOWNLOAD=1 python -c "from server.cutout import _session; _session()"
-CMD ["sh", "-c", "uvicorn server.hosted:app --host 0.0.0.0 --port ${PORT:-10000} --workers 1 --no-access-log"]
+CMD ["sh", "-c", "exec uvicorn server.hosted:app --host 0.0.0.0 --port ${PORT:-10000} --workers 1 --no-access-log"]
