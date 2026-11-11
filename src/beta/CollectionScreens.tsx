@@ -6,6 +6,7 @@ import * as ImagePicker from "expo-image-picker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { PerfumeCabinet } from "../components/PerfumeCabinet";
 import type { Bottle } from "../domain/types";
+import { recoverUploadedCapture } from "./capture";
 import { useBeta } from "./Provider";
 import { compressPhoto, gateway, localPhoto, mediaUri } from "./api";
 import {
@@ -228,7 +229,11 @@ export function CaptureScreen({
           }));
       if (result.canceled) return;
       const id = `draft-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      const photo = localPhoto(await compressPhoto(result.assets[0].uri), id);
+      const photo = localPhoto(
+        await compressPhoto(result.assets[0].uri),
+        id,
+        b.session!.user.id,
+      );
       const next: Draft = {
         id,
         uri: photo,
@@ -304,6 +309,30 @@ export function CaptureScreen({
       ) : (
         job && <Photo path={job.original_path} />
       )}{" "}
+      {job?.status === "uploading" && !uri && (
+        <>
+          <Body>
+            If this upload was interrupted on another device, Fraggy can
+            continue from its saved original. If the original never finished
+            uploading, choose the photo again.
+          </Body>
+          <Button
+            title="Resume uploaded photo"
+            secondary
+            disabled={a.busy}
+            onPress={() =>
+              void a.act(async () => {
+                const recovered = await recoverUploadedCapture(job, gateway);
+                if (!recovered)
+                  throw Error(
+                    "The original did not finish uploading. Choose the photo again.",
+                  );
+                await b.refresh();
+              })
+            }
+          />
+        </>
+      )}
       {(job?.status === "failed" ||
         job?.status === "ready" ||
         stalled ||

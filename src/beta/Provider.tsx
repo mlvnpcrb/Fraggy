@@ -9,7 +9,7 @@ import React, {
 import { AppState, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Session } from "@supabase/supabase-js";
-import { blankState, type BetaState, type Draft, type Job } from "./types";
+import { blankState, type BetaState, type Draft } from "./types";
 import {
   supabase,
   rpc,
@@ -18,7 +18,8 @@ import {
   clearPrivateCache,
   mediaUri,
 } from "./api";
-
+import { AccountScope, signOutDevice, type AccountLease } from "./session";
+import { processCapture, recoverUploadedCapture } from "./capture";
 type Context = {
   session: Session | null;
   loading: boolean;
@@ -44,17 +45,40 @@ export function BetaProvider({ children }: { children: React.ReactNode }) {
     [offline, setOffline] = useState(false),
     [error, setError] = useState(""),
     [drafts, setDrafts] = useState<Draft[]>([]);
-  const sessionRef = useRef(session);
-  sessionRef.current = session;
-  const draftsRef = useRef(drafts);
+  const sessionRef = useRef<Session | null>(null),
+    scope = useRef(new AccountScope()),
+    draftsRef = useRef(drafts),
+    pending = useRef(new Set<string>()),
+    refreshBusy = useRef<AccountLease | null>(null),
+    writes = useRef(new Set<Promise<void>>());
   draftsRef.current = drafts;
-  const pending = useRef(new Set<string>());
-  const refreshBusy = useRef(false);
+  const assertCurrent = (lease: AccountLease) => {
+    if (!scope.current.valid(lease))
+      throw Error(
+        "Your account changed. Reopen the capture from its original account.",
+      );
+  };
+  const persist = async (lease: AccountLease, key: string, value: unknown) => {
+    assertCurrent(lease);
+    const write = AsyncStorage.setItem(key, JSON.stringify(value));
+    writes.current.add(write);
+    try {
+      await write;
+    } finally {
+      writes.current.delete(write);
+    }
+    assertCurrent(lease);
+  };
   useEffect(() => {
+    const change = (next: Session | null) => {
+      scope.current.set(next?.user.id || null);
+      sessionRef.current = next;
+      setSession(next);
+    };
     supabase.auth
       .getSession()
       .then(({ data, error }) => {
-        setSession(data.session);
+        change(data.session);
         if (error) setError(error.message);
         setLoading(false);
       })
@@ -62,58 +86,67 @@ export function BetaProvider({ children }: { children: React.ReactNode }) {
         setError(String(e));
         setLoading(false);
       });
-    const { data } = supabase.auth.onAuthStateChange((_event, s) =>
-      setSession(s),
+    const { data } = supabase.auth.onAuthStateChange((_event, next) =>
+      change(next),
     );
     return () => data.subscription.unsubscribe();
   }, []);
   const refresh = useCallback(async () => {
-    const user = sessionRef.current?.user.id;
-    if (!user || refreshBusy.current) return;
-    refreshBusy.current = true;
+    if (!sessionRef.current) return;
+    const lease = scope.current.capture();
+    if (refreshBusy.current && scope.current.valid(refreshBusy.current)) return;
+    refreshBusy.current = lease;
     try {
-      await rpc("expire_proposals");
-      const data = await rpc<BetaState>("beta_state");
-      if (sessionRef.current?.user.id !== user) return;
+      await rpc("expire_proposals", {}, lease.userId);
+      assertCurrent(lease);
+      const data = await rpc<BetaState>("beta_state", {}, lease.userId);
+      assertCurrent(lease);
       setState(data);
       setOffline(false);
       setError("");
       const own = {
         ...blankState,
-        user_id: user,
-        profiles: data.profiles.filter((p) => p.id === user),
-        shelves: data.shelves.filter((s) => s.owner_id === user),
-        bottles: data.bottles.filter((b) => b.owner_id === user),
+        user_id: lease.userId,
+        profiles: data.profiles.filter((p) => p.id === lease.userId),
+        shelves: data.shelves.filter((s) => s.owner_id === lease.userId),
+        bottles: data.bottles.filter((b) => b.owner_id === lease.userId),
       };
-      await AsyncStorage.setItem(
-        `fraggy.collection.${user}`,
-        JSON.stringify(own),
-      );
+      await persist(lease, `fraggy.collection.${lease.userId}`, own);
       for (const bottle of own.bottles)
         if (bottle.image_path)
-          void mediaUri(bottle.image_path, user).catch(() => {});
+          void mediaUri(bottle.image_path, lease.userId).catch(() => {});
     } catch (e) {
-      setOffline(true);
-      setError(e instanceof Error ? e.message : "Could not refresh.");
+      if (scope.current.valid(lease)) {
+        setOffline(true);
+        setError(e instanceof Error ? e.message : "Could not refresh.");
+      }
     } finally {
-      refreshBusy.current = false;
+      if (refreshBusy.current === lease) refreshBusy.current = null;
     }
   }, []);
   useEffect(() => {
     setState(blankState);
+    draftsRef.current = [];
     setDrafts([]);
     const id = session?.user.id;
     if (!id) return;
+    const lease = scope.current.capture();
     let active = true;
     Promise.all([
       AsyncStorage.getItem(`fraggy.collection.${id}`),
       AsyncStorage.getItem(`fraggy.drafts.${id}`),
-    ]).then(([cache, draft]) => {
-      if (!active) return;
-      if (cache) setState(JSON.parse(cache));
-      if (draft) setDrafts(JSON.parse(draft));
-      void refresh();
-    });
+    ])
+      .then(([cache, draft]) => {
+        if (!active || !scope.current.valid(lease)) return;
+        if (cache) setState(JSON.parse(cache));
+        if (draft) {
+          const restored = JSON.parse(draft);
+          draftsRef.current = restored;
+          setDrafts(restored);
+        }
+        void refresh();
+      })
+      .catch(() => void refresh());
     const channel = supabase
       .channel(`beta:${id}`)
       .on(
@@ -139,9 +172,8 @@ export function BetaProvider({ children }: { children: React.ReactNode }) {
       void supabase.removeChannel(channel);
     };
   }, [session?.user.id, refresh]);
-  const saveDraft = useCallback(async (draft: Draft) => {
-    const id = sessionRef.current?.user.id;
-    if (!id) return;
+  const saveScoped = useCallback(async (draft: Draft, lease: AccountLease) => {
+    assertCurrent(lease);
     const existing = draftsRef.current.find((d) => d.id === draft.id);
     const merged = { ...draft, jobId: draft.jobId || existing?.jobId };
     const next = [
@@ -150,74 +182,58 @@ export function BetaProvider({ children }: { children: React.ReactNode }) {
     ];
     draftsRef.current = next;
     setDrafts(next);
-    await AsyncStorage.setItem(`fraggy.drafts.${id}`, JSON.stringify(next));
+    await persist(lease, `fraggy.drafts.${lease.userId}`, next);
   }, []);
-  const removeDraft = useCallback(async (id: string) => {
-    const user = sessionRef.current?.user.id;
-    if (!user) return;
-    const next = draftsRef.current.filter((d) => d.id !== id);
-    draftsRef.current = next;
-    setDrafts(next);
-    await AsyncStorage.setItem(`fraggy.drafts.${user}`, JSON.stringify(next));
-  }, []);
+  const renderedUser = session?.user.id;
+  const saveDraft = useCallback(
+    async (draft: Draft) => {
+      if (!renderedUser || sessionRef.current?.user.id !== renderedUser)
+        throw Error("Sign in to the original account.");
+      await saveScoped(draft, scope.current.capture());
+    },
+    [renderedUser, saveScoped],
+  );
+  const removeDraft = useCallback(
+    async (id: string) => {
+      if (!renderedUser || sessionRef.current?.user.id !== renderedUser) return;
+      const lease = scope.current.capture(),
+        next = draftsRef.current.filter((d) => d.id !== id);
+      draftsRef.current = next;
+      setDrafts(next);
+      await persist(lease, `fraggy.drafts.${lease.userId}`, next);
+    },
+    [renderedUser],
+  );
   const processDraft = useCallback(
     async (draft: Draft) => {
-      if (pending.current.has(draft.id)) return draft.jobId || "";
-      pending.current.add(draft.id);
-      let current = draft;
+      if (!renderedUser || sessionRef.current?.user.id !== renderedUser)
+        throw Error("Sign in to the original account.");
+      const lease = scope.current.capture(),
+        key = `${lease.userId}:${lease.generation}:${draft.id}`;
+      if (pending.current.has(key)) return draft.jobId || "";
+      pending.current.add(key);
       try {
-        if (!current.jobId) {
-          const result = await gateway<{ job: Job; upload_url: string }>(
-            "create-capture",
-          );
-          current = {
-            ...current,
-            form:
-              draftsRef.current.find((d) => d.id === draft.id)?.form ||
-              current.form,
-            jobId: result.job.id,
-            error: undefined,
-          };
-          await saveDraft(current);
-          await uploadPhoto(result.upload_url, current.uri);
-        } else {
-          const existing = await rpc<BetaState>("beta_state");
-          const job = existing.jobs.find((j) => j.id === current.jobId);
-          if (job?.status === "uploading") {
-            const result = await gateway<{
-              upload_url: string;
-              uploaded?: boolean;
-            }>("resume-upload", { job_id: current.jobId });
-            if (!result.uploaded)
-              await uploadPhoto(result.upload_url, current.uri);
-          }
-        }
-        await gateway("start-capture", {
-          job_id: current.jobId,
-          draft:
+        return await processCapture(draft, {
+          gateway: <T,>(action: string, args?: Record<string, unknown>) =>
+            gateway<T>(action, args, lease.userId, () =>
+              scope.current.valid(lease),
+            ),
+          save: (d) => saveScoped(d, lease),
+          upload: uploadPhoto,
+          loadJobs: async () =>
+            (await rpc<BetaState>("beta_state", {}, lease.userId)).jobs,
+          latestForm: () =>
             draftsRef.current.find((d) => d.id === draft.id)?.form ||
-            current.form,
+            draft.form,
+          refresh,
+          isCurrent: () => scope.current.valid(lease),
         });
-        await refresh();
-        return current.jobId!;
-      } catch (e) {
-        await saveDraft({
-          ...current,
-          form:
-            draftsRef.current.find((d) => d.id === draft.id)?.form ||
-            current.form,
-          error:
-            e instanceof Error ? e.message : "Photo could not be uploaded.",
-        });
-        throw e;
       } finally {
-        pending.current.delete(draft.id);
+        pending.current.delete(key);
       }
     },
-    [saveDraft, refresh],
+    [renderedUser, saveScoped, refresh],
   );
-  // Only interrupted uploads auto-resume. Failed inference waits for retry so
-  // reconnection cannot consume every daily processing attempt.
   useEffect(() => {
     if (offline || !session) return;
     for (const draft of drafts) {
@@ -225,21 +241,59 @@ export function BetaProvider({ children }: { children: React.ReactNode }) {
       if (!draft.jobId || job?.status === "uploading")
         void processDraft(draft).catch(() => {});
     }
+    for (const job of state.jobs) {
+      if (job.status !== "uploading" || drafts.some((d) => d.jobId === job.id))
+        continue;
+      const lease = scope.current.capture(),
+        key = `server:${lease.userId}:${lease.generation}:${job.id}`;
+      if (pending.current.has(key)) continue;
+      pending.current.add(key);
+      void recoverUploadedCapture(
+        job,
+        <T,>(action: string, args?: Record<string, unknown>) =>
+          gateway<T>(action, args, lease.userId, () =>
+            scope.current.valid(lease),
+          ),
+      )
+        .then((changed) => {
+          if (changed && scope.current.valid(lease)) void refresh();
+        })
+        .catch(() => {})
+        .finally(() => pending.current.delete(key));
+    }
   }, [offline, state.jobs, session?.user.id]);
   const run = useCallback(
     async <T,>(name: string, args: Record<string, unknown> = {}) => {
-      const data = await rpc<T>(name, args);
+      if (!renderedUser || sessionRef.current?.user.id !== renderedUser)
+        throw Error("Your account changed.");
+      const lease = scope.current.capture();
+      const data = await rpc<T>(name, args, lease.userId);
+      assertCurrent(lease);
       await refresh();
+      assertCurrent(lease);
       return data;
     },
-    [refresh],
+    [renderedUser, refresh],
   );
   const signOut = async () => {
     const id = sessionRef.current?.user.id;
-    await supabase.auth.signOut();
+    scope.current.set(null);
+    sessionRef.current = null;
+    setSession(null);
+    const result = await signOutDevice(supabase);
+    await Promise.allSettled([...writes.current]);
     if (id) await clearPrivateCache(id);
+    const currentSession = sessionRef.current as Session | null;
+    if (currentSession?.user.id && currentSession.user.id !== id) return;
     setState(blankState);
+    draftsRef.current = [];
     setDrafts([]);
+    setOffline(false);
+    setError(
+      result.error
+        ? "Signed out on this device. The server could not confirm session revocation."
+        : "",
+    );
   };
   return (
     <BetaContext.Provider

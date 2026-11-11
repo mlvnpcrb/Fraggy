@@ -46,7 +46,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "cutout": "node scripts/cutout-server.cjs",
-    "test:db": "node scripts/test-beta-db.cjs",
+    "test:db": "node scripts/test-beta-db.cjs && node scripts/test-review-db.cjs",
     "test:browser": "node scripts/beta-browser-smoke.cjs"
   },
   "private": true

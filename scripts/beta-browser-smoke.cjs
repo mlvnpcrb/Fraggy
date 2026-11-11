@@ -94,7 +94,16 @@ const state = {
   messages: [],
   events: [],
   notifications: [],
-  jobs: [],
+  jobs: [
+    {
+      id: "server-only",
+      status: "uploading",
+      draft: {},
+      original_path: null,
+      cutout_path: null,
+      updated_at: new Date().toISOString(),
+    },
+  ],
   reviews: [],
   blocks: [],
   reports: [],
@@ -149,6 +158,12 @@ const state = {
             created_at: new Date().toISOString(),
           },
         };
+      } else if (url.pathname.includes("/functions/v1/beta-gateway")) {
+        if (data.action === "resume-upload") result = { uploaded: true };
+        else if (data.action === "start-capture") {
+          state.jobs[0].status = "waking";
+          result = { job: state.jobs[0] };
+        }
       } else if (url.pathname.includes("/rpc/beta_state")) result = state;
       else if (url.pathname.includes("/rpc/save_shelf")) {
         state.shelves.push({
@@ -217,6 +232,9 @@ const state = {
     0,
   );
   await page.getByText("My Bottle", { exact: true }).waitFor();
+  await page
+    .getByRole("button", { name: "Resume saved photo · waking", exact: true })
+    .waitFor({ timeout: 5000 });
   await page.getByRole("textbox").fill("Night shelf");
   await page.getByRole("button", { name: "Create shelf", exact: true }).click();
   await page

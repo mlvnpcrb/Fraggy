@@ -68,29 +68,29 @@ Deno.serve(async (req: Request) => {
     const action = String(input.action || "");
     const maintenance = async () => {
       const jobs = checked(await admin.rpc("maintenance_candidates")) || [];
-      for (const job of jobs) {
+      let cleaned = 0;
+      for (const candidate of jobs) {
+        const job = checked(
+          await admin.rpc("claim_capture_cleanup", { p_job: candidate.id }),
+        );
+        if (!job) continue;
         checked(
           await admin.storage
             .from("cutouts")
             .remove([job.original_path, job.cutout_path]),
         );
-        checked(await admin.rpc("expire_capture", { p_job: job.id }));
+        checked(await admin.rpc("finish_capture_cleanup", { p_job: job.id }));
+        cleaned++;
       }
       const orphans = checked(await admin.rpc("orphan_media")) || [];
       for (let i = 0; i < orphans.length; i += 100)
         checked(
           await admin.storage.from("cutouts").remove(orphans.slice(i, i + 100)),
         );
-      checked(
-        await admin
-          .from("trades")
-          .update({ status: "expired", updated_at: new Date().toISOString() })
-          .eq("status", "proposed")
-          .lt("expires_at", new Date().toISOString()),
-      );
+      checked(await admin.rpc("maintenance_expire_proposals"));
       return {
         ok: true,
-        expired_captures: jobs.length,
+        expired_captures: cleaned,
         orphan_photos: orphans.length,
       };
     };
@@ -231,6 +231,7 @@ Deno.serve(async (req: Request) => {
           .from("cutouts")
           .createSignedUrl(job.original_path, 180),
       );
+      checked(await admin.rpc("record_upload_lease", { p_job: job.id }));
       const upload = checked(
         await admin.storage
           .from("cutouts")
@@ -269,6 +270,7 @@ Deno.serve(async (req: Request) => {
     });
     if (action === "create-capture") {
       const job = checked(await user.rpc("create_capture"));
+      checked(await admin.rpc("record_upload_lease", { p_job: job.id }));
       const upload = checked(
         await admin.storage
           .from("cutouts")
@@ -282,6 +284,7 @@ Deno.serve(async (req: Request) => {
       );
       const info = await admin.storage.from("cutouts").info(job.original_path);
       if (!info.error) return reply({ uploaded: true });
+      checked(await admin.rpc("record_upload_lease", { p_job: job.id }));
       const upload = checked(
         await admin.storage
           .from("cutouts")

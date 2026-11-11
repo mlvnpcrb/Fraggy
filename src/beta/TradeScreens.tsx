@@ -89,7 +89,11 @@ export function TradeScreen({
       trade.status,
     ),
     accepted = trade.status === "in-progress",
-    paused = trade.status === "paused";
+    paused = trade.status === "paused",
+    unaccepted = !(
+      trade.accepted_by.includes(trade.proposer_id) &&
+      trade.accepted_by.includes(trade.recipient_id)
+    );
   const action = (p_action: string, p_data: Record<string, unknown> = {}) =>
     b.run("trade_action", { p_trade: id, p_action, p_data });
   return (
@@ -119,13 +123,13 @@ export function TradeScreen({
         <Body>These photos and details are preserved for this trade.</Body>
       </Card>
       <Feedback {...a} />
-      {trade.status === "proposed" && (
+      {(trade.status === "proposed" || (paused && unaccepted)) && (
         <>
           <Body>
             Offer expires {new Date(trade.expires_at).toLocaleDateString()}.
             Both collectors must agree before either bottle is reserved.
           </Body>
-          {!trade.accepted_by.includes(me) && (
+          {trade.status === "proposed" && !trade.accepted_by.includes(me) && (
             <Button
               title="Accept this exact swap"
               disabled={a.busy}
@@ -150,7 +154,7 @@ export function TradeScreen({
           />
         </>
       )}
-      {(accepted || paused) && (
+      {(accepted || (paused && !unaccepted)) && (
         <>
           <Body>
             {trade.received_by.length}/2 receipts confirmed. Ownership changes
@@ -334,7 +338,7 @@ export function TradeScreen({
           )}
         </>
       )}
-      {!ended && (
+      {(!ended || trade.status === "complete") && (
         <Card>
           <Field
             label="Report an exchange problem"
@@ -344,7 +348,11 @@ export function TradeScreen({
             maxLength={500}
           />
           <Button
-            title="Report & pause this trade"
+            title={
+              trade.status === "complete"
+                ? "Report completed trade"
+                : "Report & pause this trade"
+            }
             secondary
             disabled={!reason || a.busy}
             onPress={() =>

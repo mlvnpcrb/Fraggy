@@ -51,18 +51,44 @@ export const supabase = createClient(projectUrl, publicKey, {
 export async function rpc<T = unknown>(
   name: string,
   args: Record<string, unknown> = {},
-): Promise<T> {
-  const { data, error } = await supabase.rpc(name, args);
-  if (error) throw Error(error.message);
-  return data as T;
-}
-export async function gateway<T = unknown>(
-  action: string,
-  data: Record<string, unknown> = {},
+  expectedUserId?: string,
 ): Promise<T> {
   const {
     data: { session },
   } = await supabase.auth.getSession();
+  if (expectedUserId && session?.user.id !== expectedUserId)
+    throw Error("Your account changed.");
+  const response = await fetch(
+    `${projectUrl}/rest/v1/rpc/${encodeURIComponent(name)}`,
+    {
+      method: "POST",
+      headers: {
+        apikey: publicKey,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token || publicKey}`,
+      },
+      body: JSON.stringify(args),
+    },
+  );
+  const raw = await response.text();
+  const result = raw ? JSON.parse(raw) : null;
+  if (!response.ok) throw Error(result?.message || "Could not reach Fraggy.");
+  return result as T;
+}
+export async function gateway<T = unknown>(
+  action: string,
+  data: Record<string, unknown> = {},
+  expectedUserId?: string,
+  isCurrent?: () => boolean,
+): Promise<T> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (
+    (expectedUserId && session?.user.id !== expectedUserId) ||
+    (isCurrent && !isCurrent())
+  )
+    throw Error("Your account changed.");
   const response = await fetch(`${projectUrl}/functions/v1/beta-gateway`, {
     method: "POST",
     headers: {
@@ -107,15 +133,18 @@ export async function uploadPhoto(url: string, uri: string) {
 }
 export const cacheDirectory = () =>
   new Directory(Paths.document, "fraggy-beta");
-export function localPhoto(uri: string, id: string) {
+export function localPhoto(uri: string, id: string, userId: string) {
   if (Platform.OS === "web") return uri;
-  const directory = cacheDirectory();
+  const directory = new Directory(cacheDirectory(), userId);
   directory.create({ idempotent: true, intermediates: true });
   const file = new File(directory, `${id}.jpg`);
   new File(uri).copy(file);
   return file.uri;
 }
+const mediaEpoch = new Map<string, number>();
 export async function mediaUri(path: string, userId: string, offline = false) {
+  const generation = mediaEpoch.get(userId) || 0;
+  const active = () => generation === (mediaEpoch.get(userId) || 0);
   if (/^https?:|^data:/.test(path))
     throw Error("Only private photo references are supported.");
   if (Platform.OS !== "web") {
@@ -128,7 +157,12 @@ export async function mediaUri(path: string, userId: string, offline = false) {
       .from("cutouts")
       .createSignedUrl(path, 120);
     if (error) throw error;
+    if (!active()) throw Error("Your account changed.");
     await File.downloadFileAsync(data.signedUrl, file, { idempotent: true });
+    if (!active()) {
+      if (file.exists) file.delete();
+      throw Error("Your account changed.");
+    }
     return file.uri;
   }
   const { data, error } = await supabase.storage
@@ -138,10 +172,11 @@ export async function mediaUri(path: string, userId: string, offline = false) {
   return data.signedUrl;
 }
 export async function clearPrivateCache(userId: string) {
+  mediaEpoch.set(userId, (mediaEpoch.get(userId) || 0) + 1);
   await AsyncStorage.removeItem(`fraggy.collection.${userId}`);
   await AsyncStorage.removeItem(`fraggy.drafts.${userId}`);
   if (Platform.OS !== "web") {
-    const dir = cacheDirectory();
+    const dir = new Directory(cacheDirectory(), userId);
     if (dir.exists) dir.delete();
   }
 }

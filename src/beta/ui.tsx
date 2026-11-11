@@ -53,6 +53,7 @@ export function Page({
               <Body>{beta.error}</Body>
             </Card>
           )}
+          {!beta.session && beta.error && <Body>{beta.error}</Body>}
           {children}
         </ScrollView>
       </KeyboardAvoidingView>
