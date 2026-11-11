@@ -119,13 +119,34 @@ abandoned data, never by enabling a paid plan automatically.
 
 ## Hosted Expo Go preview
 
-An operator must sign in to the intended Expo account and publish an Expo
-Go-compatible SDK 58 preview through the current supported Expo publishing
-workflow. Verify that workflow against current Expo documentation; do not
-publish a development-build-only EAS update and label it an Expo Go preview.
-Do not share Expo passwords/tokens in chat or Git. The session that implemented
-this branch had no Expo credentials and could compile bundles but could not
-claim publication or a working remote QR.
+The backend is deployed. Its Free processor is
+`https://fraggy-cutouts-beta.onrender.com`; this is an API, not the mobile app.
+The intended Expo account is `mlvnpcrb`. The coding workspace has no Expo login,
+so a published preview/QR is not yet claimed. Current Expo documentation
+supports [Expo Go update QR codes](https://docs.expo.dev/more/qr-codes/), with
+`slug=exp` targeting Expo Go.
+
+From the developer's Mac (one-time publishing; the Mac can be off afterwards):
+
+```sh
+git clone --branch feat/private-beta --single-branch https://github.com/mlvnpcrb/Fraggy.git ~/Downloads/fraggy-beta
+cd ~/Downloads/fraggy-beta
+npm ci --cache "$HOME/.npm-fraggy"
+npm run beta:publish
+```
+
+If that fresh folder already exists, enter it and update the branch instead of
+cloning over it. The helper signs in through Expo's own terminal prompts,
+configures/links the project, selects an SDK-based runtime for Expo Go, and
+publishes `private-beta` using the `preview` environment. It refuses a different
+Expo account. Never send passwords/tokens in chat or commit them. No paid plan
+is authorized. Commit the resulting public `app.json` Expo project configuration
+through the PR after checking it contains no credentials.
+
+The helper prints the Expo dashboard update link. Choose Preview → Expo Go and
+verify the actual QR on both phones. SDK 58 must match the installed Expo Go.
+The helper has been syntax-checked but cannot authenticate or publish without
+an operator's Expo account; it does not turn this release gate into a pass.
 
 Record the published project/revision and actual QR/link in the release report.
 Open it on physical iPhone and Android Expo Go, switch the developer's Mac off,
@@ -191,3 +212,16 @@ report first. Run required checks. Inspect migration history before adding a
 new migration; never edit an already-applied migration. Keep secrets server-side.
 Record unresolved physical-device and publication gates honestly. Merge/release
 only after five collectors pass the acceptance matrix, then expand to twenty.
+
+## Current deployment record
+
+Supabase migrations are applied and gateway v1 is active. Render service
+`srv-dbqc5quc6qcc73esunig` in the confirmed My Workspace is Free, Singapore,
+auto-deploy off, Git branch `feat/private-beta`. Initial deploy
+`dep-dbqc5rmc6qcc73esuqag` is live at `107af11`. Direct MCP creation exposes only
+part of the service configuration; its readiness check is currently TCP, with a
+verified HTTP `/health` endpoint available. Set the dashboard HTTP health path
+to `/health` when managing service settings. `render.yaml` records that target.
+Render CLI validation was unavailable in this workspace; the current official
+Blueprint specification/schema were read and the direct service configuration
+was accepted and deployed by Render. No CLI-validation result is claimed.
