@@ -28,7 +28,7 @@ export function PerfumeCabinet({
 }: {
   bottles: BottleType[];
   onBottle: (bottle: BottleType) => void;
-  onAdd: () => void;
+  onAdd?: () => void;
 }) {
   const { width, fontScale } = useWindowDimensions();
   const columns = fontScale > 1.5 ? 2 : 3;
@@ -74,7 +74,7 @@ function CabinetRow({
   columns: number;
   artSize: number;
   onBottle: (b: BottleType) => void;
-  onAdd: () => void;
+  onAdd?: () => void;
 }) {
   const id = useId().replace(/:/g, "");
   const bg = `back${id}`,
@@ -156,14 +156,19 @@ function CabinetRow({
                 ) : (
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel="Add a bottle to this shelf"
+                    accessibilityLabel={
+                      onAdd ? "Add a bottle to this shelf" : "Empty shelf space"
+                    }
+                    disabled={!onAdd}
                     onPress={onAdd}
                     style={[s.empty, { height: artSize }]}
                   >
                     <View style={s.emptyOutline}>
                       <Feather name="plus" size={18} color="#A8B49A" />
                     </View>
-                    <Text style={s.emptyText}>MAKE ROOM</Text>
+                    <Text style={s.emptyText}>
+                      {onAdd ? "MAKE ROOM" : "SHELF SPACE"}
+                    </Text>
                   </Pressable>
                 )}
               </View>

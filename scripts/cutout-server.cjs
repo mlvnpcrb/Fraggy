@@ -19,7 +19,7 @@ function run(command, args) {
 }
 if (!fs.existsSync(python)) {
   console.log(
-    "Setting up Fraggy’s local photo processor (Python 3.12+ required)…",
+    "Setting up Fraggy’s local photo processor (Python 3.11+ required)…",
   );
   run(process.platform === "win32" ? "python" : "python3", [
     "-m",
@@ -34,8 +34,9 @@ if (!fs.existsSync(marker) || fs.readFileSync(marker, "utf8") !== digest) {
   run(python, ["-m", "pip", "install", "-r", "server/requirements.txt"]);
   fs.writeFileSync(marker, digest);
 }
+run(python,["-c","import os; os.environ['FRAGGY_MODEL_DOWNLOAD']='1'; from server.cutout import _session; _session()"]);
 console.log(
-  "Photo processor: http://0.0.0.0:8787 — keep this terminal open. The first cutout downloads the small U2NetP model.",
+  "Photo processor: http://0.0.0.0:8787 — keep this terminal open. The model is ready. This server is only used in explicit demo mode.",
 );
 const child = spawn(
   python,

@@ -1,0 +1,7 @@
+*
+!server/
+!server/**
+server/models/
+server/__pycache__/
+server/fixtures/
+server/test_*.py

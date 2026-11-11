@@ -1,57 +1,49 @@
 # Fraggy
 
-A green, Gen Z luxury fragrance-collector app built with React Native and Expo. The collection is a digital perfume cabinet: continuous illuminated shelves, upright bottles, and real photo cutouts.
+A private mobile fragrance cabinet for Philippine collectors. Racing green, ivory, restrained lime, and upright bottles on continuous illuminated shelves.
 
-## Test with Expo Go on your iPhone
+**Capture → automatic background removal → inspect the actual transparent PNG → save to a permanent shelf.** One-for-one swaps transfer ownership only after both collectors separately confirm receipt. No payments or cash top-ups.
 
-Requires Node 22.13+ or supported newer LTS, Python 3.12+, and Expo Go with SDK 58 support.
+## Private beta implementation
 
-1. Download/unzip the project on a Mac or PC and run `npm ci` in its folder.
-2. In one terminal, run `npm run cutout`. First launch creates a local Python environment and installs the photo processor. Its first cutout downloads the 4.6 MB U2NetP model; later requests reuse it.
-3. In a second terminal, run `npx expo start --lan`.
-4. Keep both terminals running, connect your iPhone to the same Wi-Fi, and scan the Expo QR with the iPhone Camera. Open it in Expo Go.
-5. Tap + or an empty shelf slot, take/choose a photo, let Fraggy remove its background automatically, review the actual transparent cutout, fill bottle details, and add it to your shelf.
+The default app connects to the existing Supabase Fraggy project. It includes invitation redemption, persistent email/password sessions, private collections, named shelves and ordering, recoverable capture jobs, discovery, trade proposals, chat, manual shipping/meetups, cancellation/disputes, reviews, notifications, reporting/blocking, account deletion, and founder administration.
 
-The app derives the processor address from the Expo LAN computer. If needed, set `EXPO_PUBLIC_CUTOUT_URL=http://YOUR_COMPUTER_IP:8787` in `.env.local` and restart Expo. This is a public service address, not a secret. When using a Metro tunnel, the separate processor must also have a phone-reachable address; a tunnel to Expo alone does not expose it.
+The default app uses hosted photo jobs. Until the hosted worker is configured, captures show an actionable failure and retain the original; they never become fake successful cutouts.
 
-**Cloud limitation:** the app and processor run in this workspace and the iOS bundle compiles, but there is no external-phone tunnel. Signed Expo tunnels require login and the ngrok alternative timed out. No remote QR or physical iPhone test is claimed. Use the local computer setup above.
+This implementation is not a claim that the invitation beta is ready. See [verification and outstanding release gates](docs/private-beta-verification.md). Physical iPhone/Android, deployed cold starts, and a hosted Expo Go link must pass before inviting five collectors, then twenty.
 
-## Photo cutouts
+## Develop
 
-The app sends a resized JPEG when you choose or take a photo, to the Fraggy processor on your computer. It runs local CPU segmentation using [rembg](https://github.com/danielgatis/rembg), returns a tightly cropped transparent PNG, and closes the uploaded temporary file. No third-party image API, paid key, or retained upload is involved. The app stores the resulting cutout in its session-local collection.
+```sh
+npm ci
+cp .env.example .env.local
+npx expo start --lan
+```
 
-Use one upright bottle against a contrasting plain background, with the cap and base visible and no hands in frame. Clear glass, reflections, and busy backgrounds can affect cutout quality. Review the preview and retake if needed. Failed processing never silently adds an original photo as a successful cutout.
+Use Expo Go compatible with the existing SDK 58. Public Supabase URL/key defaults are included; they confer no privileged access. Never put service-role keys, worker tokens or database passwords in `EXPO_PUBLIC_*`, app config or GitHub. For a hosted preview that works with the developer’s Mac off, follow the [deployment runbook](docs/private-beta-deployment.md). A local Metro QR is not that release artifact.
 
-The processor is a local development companion; production hosting and persistent photo storage are separate work. Sample bottles remain clearly illustrated and sample collectors/trades are simulated.
-
-## Shelf and trade flows
-
-- Continuous green cabinet shelves with shared ledges, contact shadows and empty places to add bottles. Tap a bottle for details.
-- Discover available bottles and propose a local or shipped exchange using a bottle from your shelf.
-- Simulate the other collector accepting and receiving. Both must accept; ownership moves only after both confirm receipt. Repeated confirmations are idempotent.
-- Report a problem to pause an exchange. Reset the collection from Profile.
-
-No payments, real users, live chat, tracking, or durable persistence are connected. Restarting the app resets the demo collection and discards session-added cutouts.
-
-## Checks
+## Verify
 
 ```sh
 npm run typecheck
 npm test
-npx expo install --check
-# Python checks, after installing pytest and httpx into the cutout environment:
-python -m pytest server -q
+# Isolated local Postgres 17 only; NEVER point this at a hosted project.
+npm run test:db
+# Export first, then run the mocked API/browser screen smoke test.
+npx expo export --platform all --output-dir /tmp/fraggy-beta-export
+npm run test:browser
+# In a Python environment containing server/requirements.txt + pytest + httpx:
+U2NET_HOME=/path/to/model-directory python -m pytest server -q
+docker build -f server/Dockerfile -t fraggy-worker-beta .
+bash scripts/test-worker-memory.sh
 ```
 
-Optional browser verification requires Playwright and Chromium. Start the web preview and processor, then run:
+`test:db` requires `fraggy_beta_test` on localhost:55432. It refuses other hosts and database names, resets only that test database, applies every migration and exercises RLS, quotas and real trade operations. Details are in the runbook. Browser smoke tests use an intercepted fixture API; database and model checks are separate real integration checks.
 
-```sh
-TEST_URL=http://localhost:8081 node scripts/browser-smoke.cjs
-TEST_URL=http://localhost:8081 node scripts/accessibility-smoke.cjs
-```
+## Development fixtures
 
-The browser smoke test performs a real photo upload → CPU inference → cutout preview → shelf placement, plus collection filters and swap completion/pause/reset. The accessibility regression exercises the receipt dialog at 3× browser text. Native camera permission, haptics, VoiceOver and Dynamic Type still require device verification.
+For the old session-only prototype, set `EXPO_PUBLIC_DEMO_MODE=true` and run a development Metro server. Only that explicit development path uses fixtures and simulated counterpart actions. It is ignored in production exports. `npm run cutout` starts its optional local companion and downloads the pinned model at setup time. This is unrelated to the hosted beta’s processing path.
 
-## Design references
+## Collaboration
 
-See [shelf research and redesign](docs/shelf-redesign.md), the [design spec](docs/superpowers/specs/2026-11-09-fraggy-design.md), and [verification report](docs/verification.md). The shelf correction supersedes the original card-grid and simulated-removal scope.
+The approved scope is [the private beta plan](docs/private-beta-plan.md). Use pull requests and timestamped Supabase migrations. The captured [pre-beta schema](supabase/baseline/remote-schema.json) contains definitions, not user records or credentials. Existing records are adopted and preserved by the baseline migration. Deployment, founder bootstrap, cleanup, backups, rollback, and handoff instructions are in the runbook.

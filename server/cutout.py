@@ -27,9 +27,9 @@ def process_image(data: bytes) -> bytes:
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as error:
         raise InvalidPhoto('This photo could not be read. Try a JPEG or PNG.') from error
 
-    from rembg import remove
+    from server.segmentation import remove_background
     with _inference_lock:
-        cutout = remove(image, session=_session()).convert('RGBA')
+        cutout = remove_background(image, _session())
     alpha = cutout.getchannel('A')
     bounds = alpha.point(lambda value: 255 if value > 20 else 0).getbbox()
     if bounds is None:
@@ -48,5 +48,5 @@ def process_image(data: bytes) -> bytes:
 def _session():
     os.environ.setdefault('U2NET_HOME', str(Path(__file__).parent / 'models'))
     os.environ.setdefault('OMP_NUM_THREADS', '2')
-    from rembg import new_session
-    return new_session('u2netp', providers=['CPUExecutionProvider'])
+    from server.segmentation import session
+    return session()

@@ -1,0 +1,2321 @@
+{
+  "tables": [
+    {
+      "table_name": "blocks",
+      "column_name": "blocker_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "blocks",
+      "column_name": "blocked_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "blocks",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "owner_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "brand",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "name",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "size_ml",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "remaining_percent",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "image_path",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "image_kind",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'cutout'::text"
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "image_width",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "image_height",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "art",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'amber'::text"
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "notes",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "''::text"
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "methods",
+      "data_type": "ARRAY",
+      "udt_name": "_text",
+      "is_nullable": "NO",
+      "column_default": "ARRAY['local'::text]"
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "trade_available",
+      "data_type": "boolean",
+      "udt_name": "bool",
+      "is_nullable": "NO",
+      "column_default": "false"
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "reserved_trade_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "bottles",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_name": "follows",
+      "column_name": "follower_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "follows",
+      "column_name": "followee_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "follows",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_name": "profile_stats",
+      "column_name": "id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "profile_stats",
+      "column_name": "bottles_count",
+      "data_type": "bigint",
+      "udt_name": "int8",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "profile_stats",
+      "column_name": "followers_count",
+      "data_type": "bigint",
+      "udt_name": "int8",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "profile_stats",
+      "column_name": "following_count",
+      "data_type": "bigint",
+      "udt_name": "int8",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "profile_stats",
+      "column_name": "rating",
+      "data_type": "numeric",
+      "udt_name": "numeric",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "profiles",
+      "column_name": "id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "profiles",
+      "column_name": "handle",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "profiles",
+      "column_name": "name",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "''::text"
+    },
+    {
+      "table_name": "profiles",
+      "column_name": "city",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "''::text"
+    },
+    {
+      "table_name": "profiles",
+      "column_name": "bio",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "''::text"
+    },
+    {
+      "table_name": "profiles",
+      "column_name": "avatar_url",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "profiles",
+      "column_name": "push_token",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "profiles",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_name": "reports",
+      "column_name": "id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_name": "reports",
+      "column_name": "reporter_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "reports",
+      "column_name": "reported_user_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "reports",
+      "column_name": "reported_bottle_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "reports",
+      "column_name": "reason",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "reports",
+      "column_name": "status",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'open'::text"
+    },
+    {
+      "table_name": "reports",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_name": "reviews",
+      "column_name": "trade_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "reviews",
+      "column_name": "reviewer_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "reviews",
+      "column_name": "reviewee_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "reviews",
+      "column_name": "rating",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "reviews",
+      "column_name": "comment",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "''::text"
+    },
+    {
+      "table_name": "reviews",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_name": "trade_messages",
+      "column_name": "id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_name": "trade_messages",
+      "column_name": "trade_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "trade_messages",
+      "column_name": "sender_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "trade_messages",
+      "column_name": "text",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "trade_messages",
+      "column_name": "sent_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_name": "trades",
+      "column_name": "id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_name": "trades",
+      "column_name": "offered_bottle_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "trades",
+      "column_name": "requested_bottle_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "trades",
+      "column_name": "proposer_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "trades",
+      "column_name": "recipient_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "trades",
+      "column_name": "method",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "trades",
+      "column_name": "accepted_by",
+      "data_type": "ARRAY",
+      "udt_name": "_uuid",
+      "is_nullable": "NO",
+      "column_default": "'{}'::uuid[]"
+    },
+    {
+      "table_name": "trades",
+      "column_name": "received_by",
+      "data_type": "ARRAY",
+      "udt_name": "_uuid",
+      "is_nullable": "NO",
+      "column_default": "'{}'::uuid[]"
+    },
+    {
+      "table_name": "trades",
+      "column_name": "status",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'proposed'::text"
+    },
+    {
+      "table_name": "trades",
+      "column_name": "exchange_note",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "''::text"
+    },
+    {
+      "table_name": "trades",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_name": "trades",
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    }
+  ],
+  "constraints": [
+    {
+      "tablename": "blocks",
+      "conname": "blocks_blocked_id_fkey",
+      "definition": "FOREIGN KEY (blocked_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "blocks",
+      "conname": "blocks_blocker_id_fkey",
+      "definition": "FOREIGN KEY (blocker_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "blocks",
+      "conname": "blocks_pkey",
+      "definition": "PRIMARY KEY (blocker_id, blocked_id)"
+    },
+    {
+      "tablename": "bottles",
+      "conname": "bottles_art_check",
+      "definition": "CHECK ((art = ANY (ARRAY['amber'::text, 'blue'::text, 'rose'::text, 'green'::text])))"
+    },
+    {
+      "tablename": "bottles",
+      "conname": "bottles_brand_check",
+      "definition": "CHECK (((char_length(brand) >= 1) AND (char_length(brand) <= 80)))"
+    },
+    {
+      "tablename": "bottles",
+      "conname": "bottles_image_kind_check",
+      "definition": "CHECK ((image_kind = ANY (ARRAY['original'::text, 'sample-cutout'::text, 'cutout'::text])))"
+    },
+    {
+      "tablename": "bottles",
+      "conname": "bottles_methods_check",
+      "definition": "CHECK ((methods <@ ARRAY['local'::text, 'shipping'::text]))"
+    },
+    {
+      "tablename": "bottles",
+      "conname": "bottles_name_check",
+      "definition": "CHECK (((char_length(name) >= 1) AND (char_length(name) <= 80)))"
+    },
+    {
+      "tablename": "bottles",
+      "conname": "bottles_owner_id_fkey",
+      "definition": "FOREIGN KEY (owner_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "bottles",
+      "conname": "bottles_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "tablename": "bottles",
+      "conname": "bottles_remaining_percent_check",
+      "definition": "CHECK (((remaining_percent >= 0) AND (remaining_percent <= 100)))"
+    },
+    {
+      "tablename": "bottles",
+      "conname": "bottles_reserved_trade_fk",
+      "definition": "FOREIGN KEY (reserved_trade_id) REFERENCES trades(id) ON DELETE SET NULL"
+    },
+    {
+      "tablename": "bottles",
+      "conname": "bottles_size_ml_check",
+      "definition": "CHECK (((size_ml >= 1) AND (size_ml <= 1000)))"
+    },
+    {
+      "tablename": "follows",
+      "conname": "follows_check",
+      "definition": "CHECK ((follower_id <> followee_id))"
+    },
+    {
+      "tablename": "follows",
+      "conname": "follows_followee_id_fkey",
+      "definition": "FOREIGN KEY (followee_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "follows",
+      "conname": "follows_follower_id_fkey",
+      "definition": "FOREIGN KEY (follower_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "follows",
+      "conname": "follows_pkey",
+      "definition": "PRIMARY KEY (follower_id, followee_id)"
+    },
+    {
+      "tablename": "profiles",
+      "conname": "profiles_bio_check",
+      "definition": "CHECK ((char_length(bio) <= 160))"
+    },
+    {
+      "tablename": "profiles",
+      "conname": "profiles_handle_check",
+      "definition": "CHECK ((handle ~ '^@[a-z0-9._]{3,30}$'::text))"
+    },
+    {
+      "tablename": "profiles",
+      "conname": "profiles_handle_key",
+      "definition": "UNIQUE (handle)"
+    },
+    {
+      "tablename": "profiles",
+      "conname": "profiles_id_fkey",
+      "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "profiles",
+      "conname": "profiles_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "tablename": "reports",
+      "conname": "reports_check",
+      "definition": "CHECK (((reported_user_id IS NOT NULL) OR (reported_bottle_id IS NOT NULL)))"
+    },
+    {
+      "tablename": "reports",
+      "conname": "reports_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "tablename": "reports",
+      "conname": "reports_reason_check",
+      "definition": "CHECK (((char_length(reason) >= 1) AND (char_length(reason) <= 500)))"
+    },
+    {
+      "tablename": "reports",
+      "conname": "reports_reported_bottle_id_fkey",
+      "definition": "FOREIGN KEY (reported_bottle_id) REFERENCES bottles(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "reports",
+      "conname": "reports_reported_user_id_fkey",
+      "definition": "FOREIGN KEY (reported_user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "reports",
+      "conname": "reports_reporter_id_fkey",
+      "definition": "FOREIGN KEY (reporter_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "reports",
+      "conname": "reports_status_check",
+      "definition": "CHECK ((status = ANY (ARRAY['open'::text, 'reviewed'::text, 'actioned'::text])))"
+    },
+    {
+      "tablename": "reviews",
+      "conname": "reviews_comment_check",
+      "definition": "CHECK ((char_length(comment) <= 500))"
+    },
+    {
+      "tablename": "reviews",
+      "conname": "reviews_pkey",
+      "definition": "PRIMARY KEY (trade_id, reviewer_id)"
+    },
+    {
+      "tablename": "reviews",
+      "conname": "reviews_rating_check",
+      "definition": "CHECK (((rating >= 1) AND (rating <= 5)))"
+    },
+    {
+      "tablename": "reviews",
+      "conname": "reviews_reviewee_id_fkey",
+      "definition": "FOREIGN KEY (reviewee_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "reviews",
+      "conname": "reviews_reviewer_id_fkey",
+      "definition": "FOREIGN KEY (reviewer_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "reviews",
+      "conname": "reviews_trade_id_fkey",
+      "definition": "FOREIGN KEY (trade_id) REFERENCES trades(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "trade_messages",
+      "conname": "trade_messages_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "tablename": "trade_messages",
+      "conname": "trade_messages_sender_id_fkey",
+      "definition": "FOREIGN KEY (sender_id) REFERENCES profiles(id)"
+    },
+    {
+      "tablename": "trade_messages",
+      "conname": "trade_messages_text_check",
+      "definition": "CHECK (((char_length(TRIM(BOTH FROM text)) >= 1) AND (char_length(TRIM(BOTH FROM text)) <= 1000)))"
+    },
+    {
+      "tablename": "trade_messages",
+      "conname": "trade_messages_trade_id_fkey",
+      "definition": "FOREIGN KEY (trade_id) REFERENCES trades(id) ON DELETE CASCADE"
+    },
+    {
+      "tablename": "trades",
+      "conname": "trades_check",
+      "definition": "CHECK ((proposer_id <> recipient_id))"
+    },
+    {
+      "tablename": "trades",
+      "conname": "trades_check1",
+      "definition": "CHECK ((offered_bottle_id <> requested_bottle_id))"
+    },
+    {
+      "tablename": "trades",
+      "conname": "trades_method_check",
+      "definition": "CHECK ((method = ANY (ARRAY['local'::text, 'shipping'::text])))"
+    },
+    {
+      "tablename": "trades",
+      "conname": "trades_offered_bottle_id_fkey",
+      "definition": "FOREIGN KEY (offered_bottle_id) REFERENCES bottles(id)"
+    },
+    {
+      "tablename": "trades",
+      "conname": "trades_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "tablename": "trades",
+      "conname": "trades_proposer_id_fkey",
+      "definition": "FOREIGN KEY (proposer_id) REFERENCES profiles(id)"
+    },
+    {
+      "tablename": "trades",
+      "conname": "trades_recipient_id_fkey",
+      "definition": "FOREIGN KEY (recipient_id) REFERENCES profiles(id)"
+    },
+    {
+      "tablename": "trades",
+      "conname": "trades_requested_bottle_id_fkey",
+      "definition": "FOREIGN KEY (requested_bottle_id) REFERENCES bottles(id)"
+    },
+    {
+      "tablename": "trades",
+      "conname": "trades_status_check",
+      "definition": "CHECK ((status = ANY (ARRAY['proposed'::text, 'in-progress'::text, 'paused'::text, 'complete'::text])))"
+    }
+  ],
+  "functions": [
+    {
+      "proname": "accept_trade",
+      "definition": "CREATE OR REPLACE FUNCTION public.accept_trade(p_trade uuid)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\ndeclare\n  me uuid := auth.uid();\n  t trades; o bottles; r bottles; acc uuid[];\nbegin\n  select * into t from trades where id = p_trade for update;\n  if t.id is null or me not in (t.proposer_id, t.recipient_id) then\n    raise exception 'Only these two collectors can confirm this trade.';\n  end if;\n  if t.status in ('paused', 'complete') then raise exception 'This trade cannot be accepted.'; end if;\n  if t.status = 'in-progress' then return; end if;\n  select * into o from bottles where id = t.offered_bottle_id for update;\n  select * into r from bottles where id = t.requested_bottle_id for update;\n  if o.owner_id <> t.proposer_id or r.owner_id <> t.recipient_id then\n    raise exception 'The bottle owner has changed. Start a new offer.';\n  end if;\n  if not o.trade_available or not r.trade_available\n     or (o.reserved_trade_id is not null and o.reserved_trade_id <> t.id)\n     or (r.reserved_trade_id is not null and r.reserved_trade_id <> t.id) then\n    raise exception 'A bottle has been reserved for another trade.';\n  end if;\n  acc := array(select distinct unnest(t.accepted_by || me));\n  if t.proposer_id = any (acc) and t.recipient_id = any (acc) then\n    perform set_config('fraggy.trade_fn', 'on', true);\n    update bottles set reserved_trade_id = t.id where id in (o.id, r.id);\n    update trades set accepted_by = acc, status = 'in-progress', updated_at = now() where id = t.id;\n  else\n    update trades set accepted_by = acc, updated_at = now() where id = t.id;\n  end if;\nend;\n$function$\n"
+    },
+    {
+      "proname": "confirm_receipt",
+      "definition": "CREATE OR REPLACE FUNCTION public.confirm_receipt(p_trade uuid)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\ndeclare\n  me uuid := auth.uid();\n  t trades; rec uuid[];\nbegin\n  select * into t from trades where id = p_trade for update;\n  if t.id is null or me not in (t.proposer_id, t.recipient_id) then\n    raise exception 'Only these two collectors can confirm this trade.';\n  end if;\n  if t.status = 'complete' then return; end if;\n  if t.status <> 'in-progress' then\n    raise exception 'Both collectors must accept before confirming receipt.';\n  end if;\n  if exists (\n    select 1 from bottles\n    where id in (t.offered_bottle_id, t.requested_bottle_id)\n      and reserved_trade_id is distinct from t.id\n  ) then\n    raise exception 'The bottle reservation has changed.';\n  end if;\n  rec := array(select distinct unnest(t.received_by || me));\n  if t.proposer_id = any (rec) and t.recipient_id = any (rec) then\n    perform set_config('fraggy.trade_fn', 'on', true);\n    update bottles set owner_id = t.recipient_id, reserved_trade_id = null, trade_available = false\n      where id = t.offered_bottle_id;\n    update bottles set owner_id = t.proposer_id, reserved_trade_id = null, trade_available = false\n      where id = t.requested_bottle_id;\n    update trades set received_by = rec, status = 'complete', updated_at = now() where id = t.id;\n  else\n    update trades set received_by = rec, updated_at = now() where id = t.id;\n  end if;\nend;\n$function$\n"
+    },
+    {
+      "proname": "guard_bottle_update",
+      "definition": "CREATE OR REPLACE FUNCTION public.guard_bottle_update()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nbegin\n  if current_setting('fraggy.trade_fn', true) is distinct from 'on' then\n    if new.owner_id <> old.owner_id or new.reserved_trade_id is distinct from old.reserved_trade_id then\n      raise exception 'Ownership and reservations change only through trades.';\n    end if;\n  end if;\n  return new;\nend;\n$function$\n"
+    },
+    {
+      "proname": "is_blocked_between",
+      "definition": "CREATE OR REPLACE FUNCTION public.is_blocked_between(a uuid, b uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\n  select exists (\n    select 1 from blocks\n    where (blocker_id = a and blocked_id = b) or (blocker_id = b and blocked_id = a)\n  );\n$function$\n"
+    },
+    {
+      "proname": "is_trade_party",
+      "definition": "CREATE OR REPLACE FUNCTION public.is_trade_party(t uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\n  select exists (\n    select 1 from trades where id = t and auth.uid() in (proposer_id, recipient_id)\n  );\n$function$\n"
+    },
+    {
+      "proname": "pause_trade",
+      "definition": "CREATE OR REPLACE FUNCTION public.pause_trade(p_trade uuid)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\ndeclare t trades;\nbegin\n  select * into t from trades where id = p_trade for update;\n  if t.id is null or auth.uid() not in (t.proposer_id, t.recipient_id) then\n    raise exception 'Only these two collectors can change this trade.';\n  end if;\n  if t.status = 'complete' then raise exception 'Completed trades cannot be paused.'; end if;\n  perform set_config('fraggy.trade_fn', 'on', true);\n  update bottles set reserved_trade_id = null where reserved_trade_id = t.id;\n  update trades set status = 'paused', updated_at = now() where id = t.id;\nend;\n$function$\n"
+    },
+    {
+      "proname": "propose_trade",
+      "definition": "CREATE OR REPLACE FUNCTION public.propose_trade(p_offered uuid, p_requested uuid, p_method text)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\ndeclare\n  me uuid := auth.uid();\n  o bottles; r bottles; new_id uuid;\nbegin\n  select * into o from bottles where id = p_offered for update;\n  select * into r from bottles where id = p_requested for update;\n  if o.id is null or r.id is null then raise exception 'A bottle is no longer available.'; end if;\n  if o.owner_id <> me or r.owner_id = me then\n    raise exception 'Choose one of your bottles and one from another collector.';\n  end if;\n  if is_blocked_between(me, r.owner_id) then raise exception 'This collector is unavailable.'; end if;\n  if not o.trade_available or o.reserved_trade_id is not null\n     or not r.trade_available or r.reserved_trade_id is not null then\n    raise exception 'This bottle is not available to swap.';\n  end if;\n  if not (p_method = any (o.methods)) or not (p_method = any (r.methods)) then\n    raise exception 'Choose an exchange method both collectors offer.';\n  end if;\n  insert into trades (offered_bottle_id, requested_bottle_id, proposer_id, recipient_id, method, accepted_by)\n  values (o.id, r.id, me, r.owner_id, p_method, array[me])\n  returning id into new_id;\n  return new_id;\nend;\n$function$\n"
+    },
+    {
+      "proname": "set_trade_note",
+      "definition": "CREATE OR REPLACE FUNCTION public.set_trade_note(p_trade uuid, p_note text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\nbegin\n  if not is_trade_party(p_trade) then raise exception 'Only these two collectors can change this trade.'; end if;\n  update trades set exchange_note = trim(p_note), updated_at = now() where id = p_trade;\nend;\n$function$\n"
+    }
+  ],
+  "policies": [
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "cutouts_delete_own",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "DELETE",
+      "qual": "((bucket_id = 'cutouts'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))",
+      "with_check": null
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "cutouts_write_own",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((bucket_id = 'cutouts'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))"
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "cutouts_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "SELECT",
+      "qual": "(bucket_id = 'cutouts'::text)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "profiles",
+      "policyname": "profiles_update_self",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "UPDATE",
+      "qual": "(id = auth.uid())",
+      "with_check": "(id = auth.uid())"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "profiles",
+      "policyname": "profiles_insert_self",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(id = auth.uid())"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "profiles",
+      "policyname": "profiles_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "SELECT",
+      "qual": "(NOT is_blocked_between(auth.uid(), id))",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "bottles",
+      "policyname": "bottles_delete_own",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "DELETE",
+      "qual": "((owner_id = auth.uid()) AND (reserved_trade_id IS NULL))",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "bottles",
+      "policyname": "bottles_update_own",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "UPDATE",
+      "qual": "(owner_id = auth.uid())",
+      "with_check": "(owner_id = auth.uid())"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "bottles",
+      "policyname": "bottles_insert_own",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((owner_id = auth.uid()) AND (reserved_trade_id IS NULL))"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "bottles",
+      "policyname": "bottles_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "SELECT",
+      "qual": "(NOT is_blocked_between(auth.uid(), owner_id))",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "follows",
+      "policyname": "follows_delete_self",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "DELETE",
+      "qual": "(follower_id = auth.uid())",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "follows",
+      "policyname": "follows_insert_self",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((follower_id = auth.uid()) AND (NOT is_blocked_between(follower_id, followee_id)))"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "follows",
+      "policyname": "follows_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "trades",
+      "policyname": "trades_read_party",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "SELECT",
+      "qual": "((auth.uid() = proposer_id) OR (auth.uid() = recipient_id))",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "trade_messages",
+      "policyname": "messages_insert_party",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((sender_id = auth.uid()) AND is_trade_party(trade_id))"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "trade_messages",
+      "policyname": "messages_read_party",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "SELECT",
+      "qual": "is_trade_party(trade_id)",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "blocks",
+      "policyname": "blocks_own",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "ALL",
+      "qual": "(blocker_id = auth.uid())",
+      "with_check": "(blocker_id = auth.uid())"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "reports",
+      "policyname": "reports_read_own",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "SELECT",
+      "qual": "(reporter_id = auth.uid())",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "reports",
+      "policyname": "reports_insert_own",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(reporter_id = auth.uid())"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "reviews",
+      "policyname": "reviews_insert_party",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((reviewer_id = auth.uid()) AND (EXISTS ( SELECT 1\n   FROM trades t\n  WHERE ((t.id = reviews.trade_id) AND (t.status = 'complete'::text) AND ((auth.uid() = t.proposer_id) OR (auth.uid() = t.recipient_id)) AND ((reviews.reviewee_id = t.proposer_id) OR (reviews.reviewee_id = t.recipient_id)) AND (reviews.reviewee_id <> auth.uid())))))"
+    },
+    {
+      "schemaname": "public",
+      "tablename": "reviews",
+      "policyname": "reviews_read",
+      "permissive": "PERMISSIVE",
+      "roles": [
+        "public"
+      ],
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    }
+  ],
+  "triggers": [
+    {
+      "definition": "CREATE TRIGGER bottles_guard BEFORE UPDATE ON public.bottles FOR EACH ROW EXECUTE FUNCTION guard_bottle_update()"
+    }
+  ],
+  "grants": [
+    {
+      "grantee": "postgres",
+      "table_name": "profiles",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profiles",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profiles",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profiles",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profiles",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profiles",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profiles",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profiles",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profiles",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profiles",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profiles",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profiles",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profiles",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profiles",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profiles",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profiles",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profiles",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profiles",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profiles",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profiles",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profiles",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profiles",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profiles",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profiles",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profiles",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profiles",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profiles",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profiles",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "bottles",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "bottles",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "bottles",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "bottles",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "bottles",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "bottles",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "bottles",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "bottles",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "bottles",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "bottles",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "bottles",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "bottles",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "bottles",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "bottles",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "bottles",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "bottles",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "bottles",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "bottles",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "bottles",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "bottles",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "bottles",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "bottles",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "bottles",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "bottles",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "bottles",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "bottles",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "bottles",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "bottles",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "follows",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "follows",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "follows",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "follows",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "follows",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "follows",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "follows",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "follows",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "follows",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "follows",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "follows",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "follows",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "follows",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "follows",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "follows",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "follows",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "follows",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "follows",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "follows",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "follows",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "follows",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "follows",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "follows",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "follows",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "follows",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "follows",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "follows",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "follows",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trades",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trades",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trades",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trades",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trades",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trades",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trades",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trades",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trades",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trades",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trades",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trades",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trades",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trades",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trades",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trades",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trades",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trades",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trades",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trades",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trades",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trades",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trades",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trades",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trades",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trades",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trades",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trades",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trade_messages",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trade_messages",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trade_messages",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trade_messages",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trade_messages",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trade_messages",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "trade_messages",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trade_messages",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trade_messages",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trade_messages",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trade_messages",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trade_messages",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trade_messages",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "trade_messages",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trade_messages",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trade_messages",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trade_messages",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trade_messages",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trade_messages",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trade_messages",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "trade_messages",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trade_messages",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trade_messages",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trade_messages",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trade_messages",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trade_messages",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trade_messages",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "trade_messages",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "blocks",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "blocks",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "blocks",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "blocks",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "blocks",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "blocks",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "blocks",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "blocks",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "blocks",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "blocks",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "blocks",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "blocks",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "blocks",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "blocks",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "blocks",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "blocks",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "blocks",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "blocks",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "blocks",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "blocks",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "blocks",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "blocks",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "blocks",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "blocks",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "blocks",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "blocks",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "blocks",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "blocks",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reports",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reports",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reports",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reports",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reports",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reports",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reports",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reports",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reports",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reports",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reports",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reports",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reports",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reports",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reports",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reports",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reports",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reports",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reports",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reports",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reports",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reports",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reports",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reports",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reports",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reports",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reports",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reports",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reviews",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reviews",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reviews",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reviews",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reviews",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reviews",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "reviews",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reviews",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reviews",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reviews",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reviews",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reviews",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reviews",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "reviews",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reviews",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reviews",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reviews",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reviews",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reviews",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reviews",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "reviews",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reviews",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reviews",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reviews",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reviews",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reviews",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reviews",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "reviews",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profile_stats",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profile_stats",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profile_stats",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profile_stats",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profile_stats",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profile_stats",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "postgres",
+      "table_name": "profile_stats",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profile_stats",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profile_stats",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profile_stats",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profile_stats",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profile_stats",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profile_stats",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "anon",
+      "table_name": "profile_stats",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profile_stats",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profile_stats",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profile_stats",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profile_stats",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profile_stats",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profile_stats",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "authenticated",
+      "table_name": "profile_stats",
+      "privilege_type": "TRIGGER"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profile_stats",
+      "privilege_type": "INSERT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profile_stats",
+      "privilege_type": "SELECT"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profile_stats",
+      "privilege_type": "UPDATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profile_stats",
+      "privilege_type": "DELETE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profile_stats",
+      "privilege_type": "TRUNCATE"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profile_stats",
+      "privilege_type": "REFERENCES"
+    },
+    {
+      "grantee": "service_role",
+      "table_name": "profile_stats",
+      "privilege_type": "TRIGGER"
+    }
+  ]
+}

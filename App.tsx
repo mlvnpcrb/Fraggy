@@ -1,4 +1,5 @@
 import React from "react";
+import { BetaApp } from "./src/beta/App";
 import { ActivityIndicator, Text, View } from "react-native";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -88,6 +89,12 @@ export default function App() {
         <ActivityIndicator color={colors.lime} />
         <Text style={{ color: colors.ivory }}>Setting the shelf…</Text>
       </View>
+    );
+  if (!(__DEV__ && process.env.EXPO_PUBLIC_DEMO_MODE === "true"))
+    return (
+      <SafeAreaProvider>
+        <BetaApp />
+      </SafeAreaProvider>
     );
   return (
     <SafeAreaProvider>

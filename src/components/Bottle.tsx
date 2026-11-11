@@ -1,5 +1,5 @@
 import React, { useId } from "react";
-import { Image, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import Svg, {
   Defs,
   LinearGradient,
@@ -48,6 +48,21 @@ export function Bottle({
       </View>
     );
   }
+  if (bottle.imageKind !== "sample-cutout")
+    return (
+      <View
+        style={{
+          width: size * 0.74,
+          height: size,
+          justifyContent: "flex-end",
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ color: "#C6D3BC", fontSize: 11 }}>
+          Photo unavailable
+        </Text>
+      </View>
+    );
   const blue = bottle.art === "blue",
     green = bottle.art === "green",
     rose = bottle.art === "rose";
