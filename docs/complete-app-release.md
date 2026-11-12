@@ -55,3 +55,9 @@ A future incompatible metadata format must use an explicit schema migration and 
 ## Current deployment status
 
 The code and migration are prepared locally. The hosted `apply_migration` tool returned an expired confirmation on 2026-11-12; this update was not applied. The corresponding gateway deployment and new Expo publication remain pending. Deploy the database and matching gateway before testing this client in live mode; the isolated demo runs locally without them.
+
+## Live Scento verification
+
+Run `npm run test:scento:live` on Node 22.14 or later with curl available. This uses Fraggy's actual shared catalog service and parser against the official REST API, with no API key or personal photographs. It checks Layton and Oud Wood search/detail identity, usable notes and an unknown-fragrance search. It makes five requests on a successful run and writes timestamped status/latency evidence to the git-ignored `artifacts/scento-live-verification.json`. It exits nonzero on network failures, unexpected shapes or missing expected notes.
+
+The verifier has independent fixture tests; passing those is not a live pass. A live upstream pass also does not establish authenticated gateway deployment or physical-device behavior. The current cloud run fails before reaching Scento: the supplied proxy returns CONNECT 403 for `www.scento.com`. The available environment tools can inspect but cannot change the allowlist. The task environment's allowed domains need that host before an in-workspace live pass is possible.

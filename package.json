@@ -52,7 +52,8 @@
     "cutout": "node scripts/cutout-server.cjs",
     "test:db": "node scripts/test-beta-db.cjs && node scripts/test-review-db.cjs && node scripts/test-catalog-db.cjs",
     "test:browser": "node scripts/beta-browser-smoke.cjs && node scripts/test-complete-browser.cjs",
-    "beta:publish": "node scripts/publish-expo-beta.cjs"
+    "beta:publish": "node scripts/publish-expo-beta.cjs",
+    "test:scento:live": "node --experimental-strip-types scripts/check-scento-live.mjs"
   },
   "private": true
 }
