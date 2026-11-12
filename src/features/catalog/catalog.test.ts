@@ -106,3 +106,63 @@ it("uses the documented perfume name lookup separately from the website referenc
     "/api/perfume/v1/perfumes/layton",
   );
 });
+
+it("keeps valid fragrance matches when the provider also returns a brand-page result", () => {
+  const result = parseSearch({
+    detail: {
+      matches: [
+        {
+          kind: "perfume",
+          name: "Unprofiled result",
+          house: "Montale",
+          page: "https://www.scento.com/brand/montale",
+        },
+        {
+          kind: "perfume",
+          name: "Oud Wood",
+          house: "Tom Ford",
+          page: "https://www.scento.com/perfumes/oud-wood-tom-ford",
+        },
+      ],
+    },
+    continuation: "next-page",
+  });
+  expect(result.results.map((p) => p.name)).toEqual(["Oud Wood"]);
+  expect(result.unavailableCount).toBe(1);
+  expect(result.continuation).toBe("next-page");
+});
+it("does not claim there are no matches when every returned perfume has an unusable reference", () => {
+  expect(() =>
+    parseSearch({
+      detail: {
+        matches: [
+          {
+            kind: "perfume",
+            name: "Unprofiled result",
+            house: "Montale",
+            page: "https://www.scento.com/brand/montale",
+          },
+        ],
+      },
+    }),
+  ).toThrow("no usable fragrance");
+});
+
+it("preserves pagination when an entire page contains only unprofiled entries", () => {
+  const result = parseSearch({
+    detail: {
+      matches: [
+        {
+          kind: "perfume",
+          name: "Synthetic unprofiled result",
+          house: "Montale",
+          page: "https://www.scento.com/brand/montale",
+        },
+      ],
+    },
+    continuation: "next-page",
+  });
+  expect(result.results).toEqual([]);
+  expect(result.continuation).toBe("next-page");
+  expect(result.unavailableCount).toBe(1);
+});

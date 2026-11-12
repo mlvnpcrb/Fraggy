@@ -131,10 +131,12 @@ export function FragranceEditor({
         .then((result) => {
           if (generation.current === token) setPage(result);
         })
-        .catch(() => {
+        .catch((error: unknown) => {
           if (generation.current === token)
             setError(
-              "Scento is unavailable. Try again or enter details yourself.",
+              error instanceof Error
+                ? error.message
+                : "Scento is unavailable. Try again or enter details yourself.",
             );
         })
         .finally(() => {
@@ -196,6 +198,12 @@ export function FragranceEditor({
               Showing a saved catalog response. Scento is unavailable.
             </Body>
           )}
+          {!!page?.unavailableCount && (
+            <Body>
+              Some Scento results have no usable fragrance profile link. Showing
+              available matches; custom entry is always available.
+            </Body>
+          )}
           {page?.results.map((item) => (
             <Button
               key={item.id}
@@ -205,7 +213,7 @@ export function FragranceEditor({
               onPress={() => void preview(item.id, item.name, item.brand)}
             />
           ))}
-          {page && !page.results.length && (
+          {page && !page.results.length && !page.unavailableCount && (
             <Body>No match found. Try another name or add it yourself.</Body>
           )}
           {page?.continuation && (
@@ -229,6 +237,9 @@ export function FragranceEditor({
                         ),
                       ],
                       continuation: next.continuation,
+                      unavailableCount:
+                        (page.unavailableCount || 0) +
+                        (next.unavailableCount || 0),
                     });
                 });
               }}

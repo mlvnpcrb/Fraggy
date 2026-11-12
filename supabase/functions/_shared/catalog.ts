@@ -33,6 +33,7 @@ export type CatalogSearchPage = {
   results: CatalogMatch[];
   continuation: string | null;
   stale?: boolean;
+  unavailableCount?: number;
 };
 export type CatalogFragrance = {
   reference: CatalogRef;
@@ -86,24 +87,34 @@ export function parseSearch(raw: unknown): CatalogSearchPage {
     detail = object(root.detail);
   if (!Array.isArray(detail.matches))
     throw Error("Scento returned an unsupported search response.");
+  const results: CatalogMatch[] = [];
+  let unavailableCount = 0;
+  for (const candidate of detail.matches) {
+    try {
+      const m = object(candidate);
+      if (m.kind !== "perfume") continue;
+      const ref = canonicalReference(m.page),
+        name = str(m.name, 100),
+        brand = str(m.house, 80);
+      if (!name || !brand) throw Error("Incomplete Scento result.");
+      results.push({
+        ...ref,
+        name,
+        brand,
+        family: str(m.family) || null,
+        concentration: str(m.concentration) || null,
+      });
+    } catch {
+      unavailableCount++;
+    }
+  }
+  if (!results.length && unavailableCount && !root.continuation)
+    throw Error(
+      "Scento returned matches with no usable fragrance links. Try another name or enter details yourself.",
+    );
   return {
-    results: detail.matches
-      .filter((x) => object(x).kind === "perfume")
-      .slice(0, 10)
-      .map((x) => {
-        const m = object(x),
-          ref = canonicalReference(m.page);
-        const name = str(m.name, 100),
-          brand = str(m.house, 80);
-        if (!name || !brand) throw Error("Incomplete Scento result.");
-        return {
-          ...ref,
-          name,
-          brand,
-          family: str(m.family) || null,
-          concentration: str(m.concentration) || null,
-        };
-      }),
+    results: results.slice(0, 10),
+    ...(unavailableCount ? { unavailableCount } : {}),
     continuation:
       typeof root.continuation === "string"
         ? str(root.continuation, 1500)

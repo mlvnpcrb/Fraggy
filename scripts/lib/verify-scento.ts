@@ -24,18 +24,35 @@ export async function verifyScento(
     noteCount: number;
     sourceUrl: string;
   }[] = [];
-  for (const query of ["Layton", "Oud Wood"]) {
-    onStep(`Search: ${query}`);
-    const results = (await lookupCatalog(
-      "catalog-search",
-      { query },
-      deps,
-    )) as unknown as CatalogSearchPage;
-    const match = results.results.find(
-      (p) => p.name.toLowerCase() === query.toLowerCase(),
-    );
+  for (const { query, brand } of [
+    { query: "Layton", brand: "Parfums de Marly" },
+    { query: "Oud Wood", brand: "Tom Ford" },
+  ]) {
+    let match: CatalogSearchPage["results"][number] | undefined;
+    let continuation: string | undefined;
+    for (let page = 0; page < 3; page++) {
+      onStep(`Search: ${query}${page ? ` · page ${page + 1}` : ""}`);
+      const results = (await lookupCatalog(
+        "catalog-search",
+        { query, continuation },
+        deps,
+      )) as unknown as CatalogSearchPage;
+      if (results.unavailableCount)
+        onStep(
+          `Excluded ${results.unavailableCount} result(s) without usable fragrance links`,
+        );
+      match = results.results.find(
+        (p) =>
+          p.name.toLowerCase() === query.toLowerCase() &&
+          p.brand.toLowerCase() === brand.toLowerCase(),
+      );
+      if (match || !results.continuation) break;
+      continuation = results.continuation;
+    }
     if (!match)
-      throw Error(`Search did not return the expected fragrance “${query}”.`);
+      throw Error(
+        `Search did not return the expected fragrance “${query}” by ${brand} within three pages.`,
+      );
     onStep(`Full profile: ${match.brand} · ${match.name}`);
     const profile = (await lookupCatalog(
       "catalog-detail",

@@ -15,6 +15,12 @@ function source(missingNotes = false) {
           matches: [
             {
               kind: "perfume",
+              name: "Synthetic unprofiled result",
+              house: "Montale",
+              page: "https://www.scento.com/brand/montale",
+            },
+            {
+              kind: "perfume",
               name: "Oud Wood",
               house: "Tom Ford",
               page: "https://www.scento.com/perfumes/oud-wood-tom-ford",
@@ -59,4 +65,33 @@ it("fails verification if known profiles supply no notes or upstream is unavaila
   await expect(
     verifyScento(async () => new Response("unavailable", { status: 503 })),
   ).rejects.toThrow("unavailable");
+});
+
+it("follows pagination past a brand-only page to find the exact fragrance", async () => {
+  const base = source();
+  const fetcher: typeof fetch = async (input, init) => {
+    const u = new URL(String(input));
+    if (
+      u.pathname.endsWith("/search") &&
+      u.searchParams.get("q") === "Oud Wood" &&
+      !u.searchParams.get("continuation")
+    )
+      return Response.json({
+        detail: {
+          matches: [
+            {
+              kind: "perfume",
+              name: "Synthetic unprofiled result",
+              house: "Montale",
+              page: "https://www.scento.com/brand/montale",
+            },
+          ],
+        },
+        continuation: "next",
+      });
+    return base(input);
+  };
+  const result = await verifyScento(fetcher);
+  expect(result.profiles[1].brand).toBe("Tom Ford");
+  expect(result.profiles[1].name).toBe("Oud Wood");
 });
