@@ -3,7 +3,7 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 const assert = require("node:assert/strict");
-const root = process.env.FRAGGY_WEB_EXPORT || "/tmp/fraggy-beta-export";
+const root = process.env.FRAGGY_WEB_EXPORT || "/tmp/fraggy-complete-web";
 const server = http.createServer((req, res) => {
   const file = path.join(
     root,
@@ -116,6 +116,7 @@ const state = {
     args: ["--no-sandbox"],
   });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.clock.install();
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.route(
@@ -164,7 +165,11 @@ const state = {
           state.jobs[0].status = "waking";
           result = { job: state.jobs[0] };
         }
-      } else if (url.pathname.includes("/rpc/beta_state")) result = state;
+      } else if (
+        url.pathname.includes("/rpc/beta_state") ||
+        url.pathname.includes("/rpc/beta_section")
+      )
+        result = state;
       else if (url.pathname.includes("/rpc/save_shelf")) {
         state.shelves.push({
           id: "new-shelf",
@@ -173,7 +178,7 @@ const state = {
           position: 1,
         });
         result = "new-shelf";
-      } else if (url.pathname.includes("/rpc/propose_trade")) {
+      } else if (url.pathname.includes("/rpc/reviewed_propose_trade")) {
         state.trades.push({
           id: "trade1",
           proposer_id: A,
@@ -217,6 +222,12 @@ const state = {
   );
   await page.goto("http://127.0.0.1:8092");
   await page
+    .getByRole("button", {
+      name: "Sign in or join the private beta",
+      exact: true,
+    })
+    .click();
+  await page
     .getByText("Your collection. On display.", { exact: true })
     .waitFor();
   const inputs = page.getByRole("textbox");
@@ -226,17 +237,32 @@ const state = {
     .getByRole("button", { name: "Sign in", exact: true })
     .last()
     .click();
-  await page.getByText("Good scents. Your space.", { exact: true }).waitFor();
+  await page.getByText("My shelf.", { exact: true }).waitFor();
   assert.equal(
     await page.getByText("Bleu de Chanel", { exact: true }).count(),
     0,
   );
   await page.getByText("My Bottle", { exact: true }).waitFor();
+  await page.getByRole("tab", { name: /Discover/ }).click();
   await page
-    .getByRole("button", { name: "Resume saved photo · waking", exact: true })
-    .waitFor({ timeout: 5000 });
+    .getByRole("button", { name: "View bottle", exact: true })
+    .waitFor();
+  state.bottles = state.bottles.filter((x) => x.id !== bottleB.id); // No realtime event: viewer SELECT was revoked.
+  await page.clock.fastForward(61000);
+  await page
+    .getByText("No available bottles match yet.", { exact: true })
+    .waitFor();
+  state.bottles.push(bottleB);
+  await page.getByRole("tab", { name: /My Shelf/ }).click();
+  await page
+    .getByRole("button", { name: "Activity and saved captures", exact: true })
+    .click();
+  await page.getByText("Photo studio · waking", { exact: true }).waitFor();
+  await page.getByRole("button", { name: "← Back", exact: true }).click();
+  await page.getByRole("button", { name: "Manage", exact: true }).click();
   await page.getByRole("textbox").fill("Night shelf");
   await page.getByRole("button", { name: "Create shelf", exact: true }).click();
+  await page.getByRole("button", { name: "Done", exact: true }).click();
   await page
     .getByRole("button", { name: "Night shelf", exact: true })
     .waitFor();
@@ -246,7 +272,10 @@ const state = {
     .getByRole("button", { name: "My Brand · My Bottle", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Propose swap & open chat", exact: true })
+    .getByRole("button", { name: "Review swap proposal", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Send proposal and open chat", exact: true })
     .click();
   await page.getByText("The exchange.", { exact: true }).waitFor();
   await page

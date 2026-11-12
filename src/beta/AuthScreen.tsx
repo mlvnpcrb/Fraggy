@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Body, Button, Choices, Feedback, Field, Page, useAction } from "./ui";
 import { gateway, supabase } from "./api";
-export function AuthScreen() {
+export function AuthScreen({ onBack }: { onBack?: () => void }) {
   const [mode, setMode] = useState<"Sign in" | "Join beta" | "Recovery">(
       "Sign in",
     ),
@@ -14,6 +14,7 @@ export function AuthScreen() {
   const a = useAction();
   return (
     <Page
+      back={onBack}
       title="Your collection. On display."
       subtitle="A private space for Philippine fragrance collectors. Photograph it. Shelf it. Swap it."
     >

@@ -3,7 +3,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useBeta } from "./Provider";
+import { useBeta } from "./context";
 import {
   Body,
   Button,
@@ -18,6 +18,8 @@ import {
   styles,
 } from "./ui";
 import type { BetaStack } from "./navigation";
+import { tradeNextStep } from "../features/trades/progress";
+import { FragranceSummary } from "../features/catalog/FragranceEditor";
 import type { Exchange } from "./types";
 export function TradesScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<BetaStack>>();
@@ -103,6 +105,42 @@ export function TradeScreen({
       back={() => navigation.goBack()}
     >
       <Card>
+        <Text style={styles.label}>NEXT STEP</Text>
+        <Body>{tradeNextStep(trade, me)}</Body>
+        <Body>
+          Agreement → exchange → your receipt → their receipt → ownership
+          transfer
+        </Body>
+      </Card>
+      {b.mode === "demo" && (
+        <Card>
+          <Body>
+            Explicit demo controls for the sample collector. These never contact
+            another person.
+          </Body>
+          {trade.status === "proposed" && (
+            <Button
+              title="Simulate sample collector accepting"
+              disabled={a.busy}
+              onPress={() =>
+                void a.act(() => b.run("demo_other_accept", { p_trade: id }))
+              }
+            />
+          )}{" "}
+          {trade.status === "in-progress" &&
+            !trade.received_by.includes(other) && (
+              <Button
+                title="Simulate sample collector receipt"
+                secondary
+                disabled={a.busy}
+                onPress={() =>
+                  void a.act(() => b.run("demo_other_receipt", { p_trade: id }))
+                }
+              />
+            )}
+        </Card>
+      )}
+      <Card>
         <Text style={styles.label}>THE AGREED BOTTLES</Text>
         <Body>
           {trade.snapshot.offered.name} ↔ {trade.snapshot.requested.name}
@@ -116,6 +154,7 @@ export function TradeScreen({
               {x.has_box ? "Box" : "No box"}
             </Body>
             <Body>{x.notes}</Body>
+            <FragranceSummary entry={x.fragrance} />
             <Photo path={x.original_path} />
             {x.condition_path && <Photo path={x.condition_path} />}
           </View>

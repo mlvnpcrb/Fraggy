@@ -5,8 +5,8 @@ import { Platform, Share, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { File } from "expo-file-system";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useBeta } from "./Provider";
-import { compressPhoto, gateway, supabase, uploadPhoto } from "./api";
+import { useBeta } from "./context";
+import { compressPhoto, gateway, getLiveApi, uploadPhoto } from "./runtime";
 import {
   Body,
   Button,
@@ -21,8 +21,9 @@ import {
 } from "./ui";
 import type { BetaStack } from "./navigation";
 
-export function ProfileScreen() {
-  const navigation = useNavigation<NativeStackNavigationProp<BetaStack>>();
+export function SettingsScreen({
+  navigation,
+}: NativeStackScreenProps<BetaStack, "Settings">) {
   const b = useBeta(),
     a = useAction(),
     me = b.session!.user.id,
@@ -47,7 +48,11 @@ export function ProfileScreen() {
     }
   }, [p?.id]);
   return (
-    <Page title="Your scent identity." subtitle={b.session!.user.email}>
+    <Page
+      title="Your settings."
+      subtitle={b.session!.user.email}
+      back={() => navigation.goBack()}
+    >
       <Feedback {...a} />
       {notice && <Body>{notice}</Body>}
       {p?.avatar_url && <Photo path={p.avatar_url} height={140} />}
@@ -145,6 +150,7 @@ export function ProfileScreen() {
             void a.act(async () => {
               if (password.length < 12)
                 throw Error("Use at least 12 characters.");
+              const { supabase } = await getLiveApi();
               const reauth = await supabase.auth.signInWithPassword({
                 email: b.session!.user.email!,
                 password: current,
@@ -230,6 +236,7 @@ export function ProfileScreen() {
             disabled={!deleteChecked || a.busy}
             onPress={() =>
               void a.act(async () => {
+                const { supabase } = await getLiveApi();
                 const result = await supabase.auth.signInWithPassword({
                   email: b.session!.user.email!,
                   password: current,

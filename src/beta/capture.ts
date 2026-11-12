@@ -20,6 +20,7 @@ export async function processCapture(
     upload: (url: string, uri: string) => Promise<void>;
     loadJobs: () => Promise<Job[]>;
     latestForm: () => Draft["form"];
+    latestUi?: () => Draft["ui"];
     refresh: () => Promise<void>;
     isCurrent: () => boolean;
   },
@@ -42,6 +43,7 @@ export async function processCapture(
         ...current,
         jobId: result.job.id,
         form: deps.latestForm(),
+        ui: deps.latestUi?.() || current.ui,
         error: undefined,
       };
       await deps.save(current);
@@ -65,7 +67,10 @@ export async function processCapture(
     check();
     await deps.gateway("start-capture", {
       job_id: current.jobId,
-      draft: deps.latestForm(),
+      draft: {
+        ...deps.latestForm(),
+        capture_ui: deps.latestUi?.() || current.ui,
+      },
     });
     check();
     await deps.refresh();
@@ -76,8 +81,17 @@ export async function processCapture(
     await deps.save({
       ...current,
       form: deps.latestForm(),
+      ui: deps.latestUi?.() || current.ui,
       error: error instanceof Error ? error.message : "Upload failed.",
     });
     throw error;
   }
+}
+
+/** Retry must preserve cross-device UI recovery while invalidating old inspection. */
+export function retryCaptureDraft(form: Draft["form"], ui: Draft["ui"]) {
+  return {
+    ...form,
+    capture_ui: ui ? { ...ui, reviewedCutoutPath: "" } : undefined,
+  };
 }

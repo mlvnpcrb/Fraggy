@@ -1,5 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.0";
 
+import { lookupCatalog } from "../_shared/catalogService.ts";
+
 const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -67,6 +69,7 @@ Deno.serve(async (req: Request) => {
     const input = JSON.parse(new TextDecoder().decode(bytes));
     const action = String(input.action || "");
     const maintenance = async () => {
+      checked(await admin.rpc("catalog_cleanup"));
       const jobs = checked(await admin.rpc("maintenance_candidates")) || [];
       let cleaned = 0;
       for (const candidate of jobs) {
@@ -268,6 +271,31 @@ Deno.serve(async (req: Request) => {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: auth } },
     });
+    if (action === "catalog-search" || action === "catalog-detail") {
+      checked(await user.rpc("catalog_admission"));
+      if (Deno.env.get("SCENTO_ENABLED") === "false")
+        return reply(
+          {
+            error:
+              "Catalog lookup is temporarily unavailable. Enter details yourself.",
+          },
+          503,
+        );
+      const result = await lookupCatalog(action, input, {
+        read: async (key) =>
+          checked(await admin.rpc("catalog_cached", { p_key: key })),
+        write: async (key, payload, profile) => {
+          checked(
+            await admin.rpc("catalog_store", {
+              p_key: key,
+              p_payload: payload,
+              p_profile: profile,
+            }),
+          );
+        },
+      });
+      return reply(result);
+    }
     if (action === "create-capture") {
       const job = checked(await user.rpc("create_capture"));
       checked(await admin.rpc("record_upload_lease", { p_job: job.id }));
@@ -397,6 +425,7 @@ Deno.serve(async (req: Request) => {
         "reports",
         "blocks",
         "capture_jobs",
+        "wishlist",
       ];
       const data: Record<string, unknown> = {
         version: 1,

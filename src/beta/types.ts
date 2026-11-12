@@ -1,3 +1,4 @@
+import type { FragranceEntry } from "../../supabase/functions/_shared/catalog";
 export type Profile = {
   id: string;
   handle: string;
@@ -15,6 +16,7 @@ export type Shelf = {
   position: number;
 };
 export type BottleRow = {
+  fragrance?: FragranceEntry | null;
   id: string;
   owner_id: string;
   brand: string;
@@ -39,6 +41,7 @@ export type BottleRow = {
   version: number;
 };
 export type BottleForm = {
+  fragrance?: FragranceEntry | null;
   brand: string;
   name: string;
   size_ml: number;
@@ -80,7 +83,7 @@ export type Job = {
   error: string | null;
   lease_until: string | null;
   updated_at: string;
-  draft: Partial<BottleForm>;
+  draft: Partial<BottleForm> & { capture_ui?: Draft["ui"] };
   bottle_id: string | null;
 };
 export type Exchange = {
@@ -117,6 +120,12 @@ export type TradeRow = {
 export type BetaState = {
   user_id: string;
   is_admin: boolean;
+  wishlist?: {
+    id: string;
+    owner_id: string;
+    fragrance: FragranceEntry;
+    created_at: string;
+  }[];
   profiles: Profile[];
   bottles: BottleRow[];
   shelves: Shelf[];
@@ -181,4 +190,10 @@ export type Draft = {
   form: BottleForm;
   createdAt: string;
   error?: string;
+  ui?: {
+    version: 1;
+    shelfId?: string;
+    step?: string;
+    reviewedCutoutPath?: string;
+  };
 };

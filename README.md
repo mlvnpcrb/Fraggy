@@ -49,3 +49,5 @@ For the old session-only prototype, set `EXPO_PUBLIC_DEMO_MODE=true` and run a d
 ## Collaboration
 
 The approved scope is [the private beta plan](docs/private-beta-plan.md). Use pull requests and timestamped Supabase migrations. The captured [pre-beta schema](supabase/baseline/remote-schema.json) contains definitions, not user records or credentials. Existing records are adopted and preserved by the baseline migration. Deployment, founder bootstrap, cleanup, backups, rollback, and handoff instructions are in the runbook.
+
+Complete app and Scento integration: [implementation and release notes](docs/complete-app-release.md).

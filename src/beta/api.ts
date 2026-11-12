@@ -4,6 +4,12 @@ import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 import { File, Directory, Paths } from "expo-file-system";
 import { fetch as expoFetch } from "expo/fetch";
+import {
+  storeWebOriginal,
+  resolveWebOriginal,
+  clearWebOriginals,
+  removeWebOriginal,
+} from "./webDraftPhotos";
 import * as ImageManipulator from "expo-image-manipulator";
 
 export const projectUrl =
@@ -103,7 +109,14 @@ export async function gateway<T = unknown>(
     throw Error(result.error || "Could not reach Fraggy. Your draft is saved.");
   return result as T;
 }
+export async function resolveDraftPhoto(uri: string, userId?: string) {
+  if (Platform.OS !== "web" || !uri.startsWith("fraggy-draft:")) return uri;
+  const id = userId || (await supabase.auth.getSession()).data.session?.user.id;
+  if (!id) throw Error("Sign in to resume this photo.");
+  return resolveWebOriginal(uri, id);
+}
 export async function compressPhoto(uri: string, limit = 500000) {
+  uri = await resolveDraftPhoto(uri);
   for (const width of [1400, 1100, 850, 650, 450]) {
     const photo = await ImageManipulator.manipulateAsync(
       uri,
@@ -133,8 +146,16 @@ export async function uploadPhoto(url: string, uri: string) {
 }
 export const cacheDirectory = () =>
   new Directory(Paths.document, "fraggy-beta");
-export function localPhoto(uri: string, id: string, userId: string) {
-  if (Platform.OS === "web") return uri;
+export async function localPhoto(uri: string, id: string, userId: string) {
+  if (Platform.OS === "web") {
+    const epoch = mediaEpoch.get(userId) || 0;
+    const reference = await storeWebOriginal(uri, userId, id);
+    if (epoch !== (mediaEpoch.get(userId) || 0)) {
+      await removeWebOriginal(reference, userId);
+      throw Error("Your account changed.");
+    }
+    return reference;
+  }
   const directory = new Directory(cacheDirectory(), userId);
   directory.create({ idempotent: true, intermediates: true });
   const file = new File(directory, `${id}.jpg`);
@@ -175,6 +196,7 @@ export async function clearPrivateCache(userId: string) {
   mediaEpoch.set(userId, (mediaEpoch.get(userId) || 0) + 1);
   await AsyncStorage.removeItem(`fraggy.collection.${userId}`);
   await AsyncStorage.removeItem(`fraggy.drafts.${userId}`);
+  if (Platform.OS === "web") await clearWebOriginals(userId);
   if (Platform.OS !== "web") {
     const dir = new Directory(cacheDirectory(), userId);
     if (dir.exists) dir.delete();

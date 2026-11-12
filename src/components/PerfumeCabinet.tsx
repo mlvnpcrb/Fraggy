@@ -50,7 +50,9 @@ export function PerfumeCabinet({
             columns={columns}
             artSize={artSize}
             onBottle={onBottle}
-            onAdd={onAdd}
+            onAdd={
+              row === Math.floor(bottles.length / columns) ? onAdd : undefined
+            }
           />
         ))}
       </View>
@@ -157,17 +159,23 @@ function CabinetRow({
                   <Pressable
                     accessibilityRole="button"
                     accessibilityLabel={
-                      onAdd ? "Add a bottle to this shelf" : "Empty shelf space"
+                      onAdd && slot === bottles.length
+                        ? "Add a bottle to this shelf"
+                        : "Empty shelf space"
                     }
-                    disabled={!onAdd}
-                    onPress={onAdd}
+                    disabled={!onAdd || slot !== bottles.length}
+                    onPress={slot === bottles.length ? onAdd : undefined}
                     style={[s.empty, { height: artSize }]}
                   >
                     <View style={s.emptyOutline}>
-                      <Feather name="plus" size={18} color="#A8B49A" />
+                      {onAdd && slot === bottles.length && (
+                        <Feather name="plus" size={18} color="#A8B49A" />
+                      )}
                     </View>
                     <Text style={s.emptyText}>
-                      {onAdd ? "MAKE ROOM" : "SHELF SPACE"}
+                      {onAdd && slot === bottles.length
+                        ? "MAKE ROOM"
+                        : "SHELF SPACE"}
                     </Text>
                   </Pressable>
                 )}

@@ -470,3 +470,7 @@ Separately ask what feels premium, youthful, confusing or visually excessive. Tr
 - [ ] Retain SDK 58, publish a new verified Expo Go revision, and keep the previous compatible preview available for rollback.
 
 The documentation phase does not check these boxes by itself. Implementation, accessibility validation, user research and release approval produce the evidence.
+
+## Implementation reference: complete app and catalog
+
+The [complete-app release notes](docs/complete-app-release.md) describe the implemented shared demo/live routes, staged capture, Scento/custom fragrance entry, private wishlist, privacy preview and proposal checklist. The [implementation plan](docs/superpowers/plans/2026-11-12-fraggy-complete-app-scento.md) extends this design. Device acceptance and collector studies remain release gates; these specifications do not establish that they passed.
