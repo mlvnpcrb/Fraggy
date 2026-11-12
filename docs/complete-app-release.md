@@ -24,7 +24,7 @@ The integration only caches requested entries: searches one hour, profiles seven
 2. Apply the migration to the existing Fraggy Supabase project through the normal versioned migration process. It adds metadata, private wishlists/cache, feature reads and reviewed proposals; it preserves existing records and old RPCs.
 3. Deploy `beta-gateway` with its two `_shared` dependencies. Preserve existing worker/maintenance secrets and its existing manual user/worker authorization. Do not change `verify_jwt` independently: this function authenticates different user and worker credential types inside the handler.
 4. Check authenticated Scento search/detail using an invited test account, including a timeout/custom-entry fallback, and confirm unauthenticated lookup is rejected. Do not send collector photographs or personal information to Scento.
-5. Publish the compatible Expo preview with `npm run beta:publish` only after physical device checks. The existing project publishing helper configures EAS; the Mac's Expo login is not available inside this workspace.
+5. Publish the compatible Expo preview with `npm run beta:publish` for physical device verification; complete those checks before inviting beta collectors. The existing project publishing helper configures EAS; the Mac's Expo login is not available inside this workspace.
 
 ## Verification
 
@@ -54,7 +54,22 @@ A future incompatible metadata format must use an explicit schema migration and 
 
 ## Current deployment status
 
-The code and migration are prepared locally. The hosted `apply_migration` tool returned an expired confirmation on 2026-11-12; this update was not applied. The corresponding gateway deployment and new Expo publication remain pending. Deploy the database and matching gateway before testing this client in live mode; the isolated demo runs locally without them.
+The hosted `complete_app_catalog` migration was applied successfully on 2026-11-12 UTC (version `20261112163422`). The matching `beta-gateway`, including both shared catalog modules, is ACTIVE at version 2. Hosted checks confirm the fragrance column, wishlist RLS with an authenticated owner-only SELECT policy, anonymous catalog denial, and member catalog admission. The existing Render Free processor deployment remains live; its Python implementation did not change.
+
+The repository now contains the existing public Expo project link (`@mlvnpcrb/fraggy`) and SDK-compatible `expo-updates`. This workspace is not signed in to Expo; the new mobile update must be published from the already authenticated Mac:
+
+```sh
+cd ~/Downloads/fraggy-beta
+git pull --ff-only origin feat/private-beta
+npm ci --cache "$HOME/.npm-fraggy"
+npm run beta:publish
+```
+
+Do not restore the old stashed package files over this configuration. Open the new update link printed by Expo and test its Expo Go QR on physical phones. Existing published updates still contain older client code. Authenticated hosted catalog/capture and real two-party trades remain device acceptance checks, not claimed passes.
+
+Deployment verification: 61 automated tests, TypeScript checks, local database suites, and Web/iOS/Android exports passed. The hosted security advisor reports private tables with RLS and no client policies (intentional default denial), and authenticated SECURITY DEFINER RPCs (intentional guarded operations, requiring continued authorization tests). These advisories are not a blanket security certification. See [RLS advisory](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) and [RPC advisory](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable).
+
+For future deployments, `npm run beta:deploy` provides an optional interactive backend-and-preview workflow. It requires CLI access to the existing Supabase project, rejects unexpected pending migrations, stops on backend or service verification failures, and writes a credential-free local deployment report. It never creates services or enables paid plans.
 
 ## Live Scento verification
 
@@ -82,7 +97,7 @@ The live verifier follows at most three pages per known fragrance and requires t
 
 ### Search suggestions verification · 2026-11-13
 
-The user's Mac run reached the final unknown-query check after successfully validating Layton and Tom Ford Oud Wood profiles and notes. The previous verifier incorrectly required zero results for an arbitrary unknown query. Scento can return fuzzy suggestions, so verification now reports either empty results or the suggestion count, and checks that the unknown query was not an exact fragrance-name match. The app labels results as suggestions and retains explicit profile review and selection; a suggestion never automatically fills the bottle form. The subsequent user-provided Mac run passed the corrected full verifier; see the acceptance record below. Authenticated gateway deployment and physical-phone checks remain separate pending gates.
+The user's Mac run reached the final unknown-query check after successfully validating Layton and Tom Ford Oud Wood profiles and notes. The previous verifier incorrectly required zero results for an arbitrary unknown query. Scento can return fuzzy suggestions, so verification now reports either empty results or the suggestion count, and checks that the unknown query was not an exact fragrance-name match. The app labels results as suggestions and retains explicit profile review and selection; a suggestion never automatically fills the bottle form. The subsequent user-provided Mac run passed the corrected full verifier; see the acceptance record below. The gateway is now deployed; authenticated end-to-end requests and physical-phone checks remain separate pending gates.
 
 ### Live provider acceptance record · received 2026-11-13
 

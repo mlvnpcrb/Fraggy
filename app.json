@@ -27,6 +27,18 @@
       "name": "Fraggy",
       "bundler": "metro"
     },
-    "icon": "./assets/fraggy-icon.png"
+    "icon": "./assets/fraggy-icon.png",
+    "owner": "mlvnpcrb",
+    "extra": {
+      "eas": {
+        "projectId": "8cb3bdfe-b4d0-46d1-886a-af42e506050f"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/8cb3bdfe-b4d0-46d1-886a-af42e506050f"
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    }
   }
 }

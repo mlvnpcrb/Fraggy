@@ -23,6 +23,7 @@
     "expo-image-picker": "~58.0.10",
     "expo-secure-store": "58.0.2",
     "expo-status-bar": "~58.0.4",
+    "expo-updates": "58.0.21",
     "react": "19.3.0",
     "react-dom": "^19.3.0",
     "react-native": "0.88.1",
@@ -53,7 +54,8 @@
     "test:db": "node scripts/test-beta-db.cjs && node scripts/test-review-db.cjs && node scripts/test-catalog-db.cjs",
     "test:browser": "node scripts/beta-browser-smoke.cjs && node scripts/test-complete-browser.cjs",
     "beta:publish": "node scripts/publish-expo-beta.cjs",
-    "test:scento:live": "node --experimental-strip-types scripts/check-scento-live.mjs"
+    "test:scento:live": "node --experimental-strip-types scripts/check-scento-live.mjs",
+    "beta:deploy": "node scripts/deploy-private-beta.cjs"
   },
   "private": true
 }
