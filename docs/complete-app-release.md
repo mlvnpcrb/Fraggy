@@ -58,6 +58,12 @@ The code and migration are prepared locally. The hosted `apply_migration` tool r
 
 ## Live Scento verification
 
+### Optional Scento MCP connection for Codex
+
+The project's `.codex/config.toml` registers the official `https://www.scento.com/mcp` Streamable HTTP server without authentication. A trusted local Codex project can load it after reopening/restarting the project's Codex session. Alternatively, register the same URL through Settings → MCP servers → Add server, with Streamable HTTP and no authentication. This only prepares the developer-tool connection; verify that Scento's tools actually appear and respond before calling it connected. Hosted sessions may not load local project MCP settings.
+
+MCP lets the coding assistant consult Scento. Fraggy's mobile catalog integration continues to use the REST API through its authenticated gateway; adding MCP does not deploy that gateway or establish a live mobile API pass.
+
 Run `npm run test:scento:live` on Node 22.14 or later with curl available. This uses Fraggy's actual shared catalog service and parser against the official REST API, with no API key or personal photographs. It checks Layton and Oud Wood search/detail identity, usable notes and an unknown-fragrance search. It makes five requests on a successful run and writes timestamped status/latency evidence to the git-ignored `artifacts/scento-live-verification.json`. It exits nonzero on network failures, unexpected shapes or missing expected notes.
 
 The verifier has independent fixture tests; passing those is not a live pass. A live upstream pass also does not establish authenticated gateway deployment or physical-device behavior. The current cloud run fails before reaching Scento: the supplied proxy returns CONNECT 403 for `www.scento.com`. The available environment tools can inspect but cannot change the allowlist. The task environment's allowed domains need that host before an in-workspace live pass is possible.
