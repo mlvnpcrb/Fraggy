@@ -95,3 +95,56 @@ it("follows pagination past a brand-only page to find the exact fragrance", asyn
   expect(result.profiles[1].brand).toBe("Tom Ford");
   expect(result.profiles[1].name).toBe("Oud Wood");
 });
+
+it("accepts fuzzy suggestions for an unknown query without claiming an exact or empty result", async () => {
+  const base = source();
+  const fetcher: typeof fetch = async (input) => {
+    const u = new URL(String(input));
+    if (u.searchParams.get("q")?.startsWith("fraggy-no-match-"))
+      return Response.json({
+        detail: {
+          matches: [
+            {
+              kind: "perfume",
+              name: "A suggestion",
+              house: "Example house",
+              page: "https://www.scento.com/perfumes/a-suggestion",
+            },
+          ],
+        },
+        continuation: null,
+      });
+    return base(input);
+  };
+  const result = await verifyScento(fetcher);
+  expect(result.emptySearch).toBe(false);
+  expect(result.unknownSearch).toEqual({
+    mode: "suggestions",
+    suggestionCount: 1,
+    exactMatch: false,
+  });
+});
+
+it("still fails if the unknown-query probe is unexpectedly treated as an exact fragrance name", async () => {
+  const base = source();
+  const fetcher: typeof fetch = async (input) => {
+    const u = new URL(String(input)),
+      q = u.searchParams.get("q");
+    if (q?.startsWith("fraggy-no-match-"))
+      return Response.json({
+        detail: {
+          matches: [
+            {
+              kind: "perfume",
+              name: q,
+              house: "Example house",
+              page: "https://www.scento.com/perfumes/unexpected-exact-match",
+            },
+          ],
+        },
+        continuation: null,
+      });
+    return base(input);
+  };
+  await expect(verifyScento(fetcher)).rejects.toThrow("exact fragrance name");
+});

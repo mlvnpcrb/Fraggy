@@ -204,6 +204,12 @@ export function FragranceEditor({
               available matches; custom entry is always available.
             </Body>
           )}
+          {!!page?.results.length && (
+            <Body>
+              Search suggestions. Check the fragrance, house and concentration
+              before choosing.
+            </Body>
+          )}
           {page?.results.map((item) => (
             <Button
               key={item.id}

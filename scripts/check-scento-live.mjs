@@ -74,7 +74,11 @@ try {
     console.log(
       `PASS: ${p.brand} · ${p.name} · ${p.noteCount} notes · ${p.sourceUrl}`,
     );
-  console.log("PASS: unknown-fragrance search returns no matches.");
+  console.log(
+    result.emptySearch
+      ? "PASS: unknown-fragrance search returned no matches."
+      : `PASS: unknown-fragrance search returned ${result.unknownSearch.suggestionCount} suggestions and no exact name match.`,
+  );
   console.log(
     "This verifies the live provider and shared adapter, not the deployed authenticated gateway or physical-phone flow.",
   );

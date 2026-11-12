@@ -82,14 +82,28 @@ export async function verifyScento(
     });
   }
   onStep("Unknown-fragrance search");
-  const empty = (await lookupCatalog(
+  const unknownQuery = "fraggy-no-match-28e5d346";
+  const suggestions = (await lookupCatalog(
     "catalog-search",
-    { query: "fraggy-no-match-28e5d346" },
+    { query: unknownQuery },
     deps,
   )) as unknown as CatalogSearchPage;
-  if (empty.results.length)
+  if (
+    suggestions.results.some(
+      (p) => p.name.trim().toLowerCase() === unknownQuery,
+    )
+  )
     throw Error(
-      "The no-match search unexpectedly returned a fragrance. Inspect the provider search semantics.",
+      "The unknown query unexpectedly matched an exact fragrance name. Review this test query.",
     );
-  return { profiles, emptySearch: true };
+  const emptySearch = suggestions.results.length === 0;
+  return {
+    profiles,
+    emptySearch,
+    unknownSearch: {
+      mode: emptySearch ? ("empty" as const) : ("suggestions" as const),
+      suggestionCount: suggestions.results.length,
+      exactMatch: false as const,
+    },
+  };
 }
