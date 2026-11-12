@@ -28,8 +28,13 @@ export function createCatalogApi(mode: "live" | "demo", viewerId: string) {
         continuation: null,
       };
     },
-    async getFragrance(id: string): Promise<CatalogFragrance> {
-      if (mode === "live") return gateway("catalog-detail", { id }, viewerId);
+    async getFragrance(
+      id: string,
+      name?: string,
+      brand?: string,
+    ): Promise<CatalogFragrance> {
+      if (mode === "live")
+        return gateway("catalog-detail", { id, name, brand }, viewerId);
       return {
         reference: {
           provider: "scento",

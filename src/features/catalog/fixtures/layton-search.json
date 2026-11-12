@@ -1,0 +1,22 @@
+{
+  "folio": "perfume-search",
+  "detail": {
+    "query": "Layton",
+    "kind": "perfume",
+    "total": 1,
+    "matches": [
+      {
+        "kind": "perfume",
+        "name": "Layton",
+        "house": "Parfums de Marly",
+        "family": "Wood & Root",
+        "page": "https://www.scento.com/perfumes/layton-parfums-de-marly"
+      }
+    ]
+  },
+  "scento_page": {
+    "label": "Layton on Scento",
+    "url": "https://www.scento.com/perfumes/layton-parfums-de-marly"
+  },
+  "continuation": null
+}

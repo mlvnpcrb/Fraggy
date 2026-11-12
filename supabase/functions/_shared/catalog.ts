@@ -78,7 +78,7 @@ export function canonicalReference(value: unknown): {
     /^\/(?:en\/)?perfumes\/([a-z0-9][a-z0-9-]{0,159})\/?$/i,
   );
   if (!match || u.search || u.hash)
-    throw Error("Unsupported Scento fragrance link.");
+    throw Error(`Unsupported Scento fragrance link path: ${u.pathname}.`);
   return { id: match[1], sourceUrl: u.origin + u.pathname };
 }
 export function parseSearch(raw: unknown): CatalogSearchPage {
@@ -178,5 +178,18 @@ export function catalogUrl(
     !/^[a-z0-9][a-z0-9-]{0,159}$/i.test(input.id)
   )
     throw Error("Choose a valid fragrance.");
-  return `${base}/perfumes/${encodeURIComponent(input.id)}?lang=en`;
+  // The website's SEO slug is a reference ID, not necessarily an API alias.
+  // Scento documents the perfume name as a valid lookup value.
+  if (
+    input.name !== undefined &&
+    (typeof input.name !== "string" ||
+      !input.name.trim() ||
+      input.name.length > 100)
+  )
+    throw Error("Choose a valid fragrance name.");
+  const lookup =
+    input.name === undefined
+      ? input.id
+      : String(input.name).trim().toLowerCase();
+  return `${base}/perfumes/${encodeURIComponent(lookup)}?lang=en`;
 }

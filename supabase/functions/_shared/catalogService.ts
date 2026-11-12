@@ -6,6 +6,24 @@ type Deps = {
   write: (key: string, payload: Payload, profile: boolean) => Promise<void>;
   fetcher?: typeof fetch;
 };
+function selectedProfile(payload: Payload, input: Record<string, unknown>) {
+  if (input.name === undefined) return payload;
+  const profile = payload as unknown as import("./catalog.ts").CatalogFragrance;
+  const same = (a: unknown, b: unknown) =>
+    typeof a === "string" &&
+    typeof b === "string" &&
+    a.trim().normalize("NFC").toLowerCase() ===
+      b.trim().normalize("NFC").toLowerCase();
+  if (
+    profile.reference?.id !== input.id ||
+    !same(profile.details?.name, input.name) ||
+    (input.brand !== undefined && !same(profile.details?.brand, input.brand))
+  )
+    throw Error(
+      "Scento returned a different fragrance. Choose the exact variant or enter details yourself.",
+    );
+  return payload;
+}
 const inFlight = new Map<string, Promise<Payload>>();
 export async function lookupCatalog(
   action: string,
@@ -14,9 +32,11 @@ export async function lookupCatalog(
 ): Promise<Payload> {
   const url = catalogUrl(action, input),
     cached = await deps.read(url);
-  if (cached && !cached.stale) return cached.payload;
+  const validate = (payload: Payload) =>
+    action === "catalog-detail" ? selectedProfile(payload, input) : payload;
+  if (cached && !cached.stale) return validate(cached.payload);
   const pending = inFlight.get(url);
-  if (pending) return pending;
+  if (pending) return validate(await pending);
   const task = (async () => {
     try {
       const response = await (deps.fetcher || fetch)(url, {
@@ -49,7 +69,7 @@ export async function lookupCatalog(
   })();
   inFlight.set(url, task);
   try {
-    return await task;
+    return validate(await task);
   } finally {
     inFlight.delete(url);
   }

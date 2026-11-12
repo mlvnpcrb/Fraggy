@@ -146,10 +146,10 @@ export function FragranceEditor({
       ++generation.current;
     };
   }, [query, lookup, b.mode]);
-  const preview = async (id: string) => {
+  const preview = async (id: string, name?: string, brand?: string) => {
     const token = ++generation.current;
     await a.act(async () => {
-      const result = await catalog.getFragrance(id);
+      const result = await catalog.getFragrance(id, name, brand);
       if (generation.current === token) setCandidate(result);
     });
   };
@@ -202,7 +202,7 @@ export function FragranceEditor({
               title={`${item.brand} · ${item.name}${item.concentration ? " · " + item.concentration : ""}`}
               secondary
               disabled={a.busy}
-              onPress={() => void preview(item.id)}
+              onPress={() => void preview(item.id, item.name, item.brand)}
             />
           ))}
           {page && !page.results.length && (
@@ -241,7 +241,13 @@ export function FragranceEditor({
           title="Check for updated Scento details"
           secondary
           disabled={a.busy}
-          onPress={() => void preview(value.fragrance!.reference!.id)}
+          onPress={() =>
+            void preview(
+              value.fragrance!.reference!.id,
+              value.fragrance!.details.name,
+              value.fragrance!.details.brand,
+            )
+          }
         />
       )}
       {candidate && (

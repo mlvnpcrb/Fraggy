@@ -1,0 +1,23 @@
+{
+  "folio": "perfume-portrait",
+  "detail": {
+    "name": "Layton",
+    "house": "Parfums de Marly",
+    "year": null,
+    "perfumer": null,
+    "concentration": "eau de parfum",
+    "family": "Wood & Root",
+    "subfamily": "Velvet Sweet",
+    "pyramid": {
+      "top": ["Apple", "Bergamot", "Cardamom"],
+      "heart": ["Lavender", "Violet", "Geranium"],
+      "base": ["Patchouli", "Vanilla", "Guaiac Wood", "Praline"]
+    },
+    "notes": null
+  },
+  "scento_page": {
+    "label": "Layton on Scento",
+    "url": "https://www.scento.com/perfumes/layton-parfums-de-marly"
+  },
+  "continuation": null
+}

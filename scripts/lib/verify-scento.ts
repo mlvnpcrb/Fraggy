@@ -4,7 +4,10 @@ import type {
   CatalogSearchPage,
 } from "../../supabase/functions/_shared/catalog.ts";
 /** Shared adapter exercise. A caller using fixtures MUST label its result as a test. */
-export async function verifyScento(fetcher: typeof fetch) {
+export async function verifyScento(
+  fetcher: typeof fetch,
+  onStep: (message: string) => void = () => {},
+) {
   const cache = new Map<string, Record<string, unknown>>();
   const deps = {
     fetcher,
@@ -22,6 +25,7 @@ export async function verifyScento(fetcher: typeof fetch) {
     sourceUrl: string;
   }[] = [];
   for (const query of ["Layton", "Oud Wood"]) {
+    onStep(`Search: ${query}`);
     const results = (await lookupCatalog(
       "catalog-search",
       { query },
@@ -32,9 +36,10 @@ export async function verifyScento(fetcher: typeof fetch) {
     );
     if (!match)
       throw Error(`Search did not return the expected fragrance “${query}”.`);
+    onStep(`Full profile: ${match.brand} · ${match.name}`);
     const profile = (await lookupCatalog(
       "catalog-detail",
-      { id: match.id },
+      { id: match.id, name: match.name, brand: match.brand },
       deps,
     )) as unknown as CatalogFragrance;
     if (
@@ -59,6 +64,7 @@ export async function verifyScento(fetcher: typeof fetch) {
       sourceUrl: profile.reference.sourceUrl,
     });
   }
+  onStep("Unknown-fragrance search");
   const empty = (await lookupCatalog(
     "catalog-search",
     { query: "fraggy-no-match-28e5d346" },

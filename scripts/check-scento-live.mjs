@@ -59,7 +59,9 @@ const curlFetch = async (input) => {
 };
 let report;
 try {
-  const result = await verifyScento(curlFetch);
+  const result = await verifyScento(curlFetch, (message) =>
+    console.log(`CHECK: ${message}`),
+  );
   report = {
     status: "passed",
     verification: "live-upstream-through-fraggy-adapter",

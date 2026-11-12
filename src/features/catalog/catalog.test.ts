@@ -93,3 +93,16 @@ describe("catalog contract", () => {
     ).toThrow();
   });
 });
+
+it("uses the documented perfume name lookup separately from the website reference id", () => {
+  const url = new URL(
+    catalogUrl("catalog-detail", {
+      id: "layton-parfums-de-marly",
+      name: "Layton",
+      brand: "Parfums de Marly",
+    }),
+  );
+  expect(decodeURIComponent(url.pathname)).toBe(
+    "/api/perfume/v1/perfumes/layton",
+  );
+});

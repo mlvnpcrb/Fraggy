@@ -51,3 +51,32 @@ it("preserves stale cached details on outage and exposes retry guidance", async 
     ),
   ).rejects.toThrow("30");
 });
+
+it("rejects a different brand or fragrance returned for an ambiguous name", async () => {
+  const input = { id: "example", name: "Example", brand: "Another house" };
+  await expect(
+    lookupCatalog("catalog-detail", input, {
+      read: async () => null,
+      write: async () => {},
+      fetcher: async () => Response.json(profile),
+    }),
+  ).rejects.toThrow("different fragrance");
+});
+it("checks selection identity even when a name lookup has a cached response", async () => {
+  await expect(
+    lookupCatalog(
+      "catalog-detail",
+      { id: "example-edt", name: "Example", brand: "House" },
+      {
+        read: async () => ({
+          payload: {
+            reference: { id: "example-edp" },
+            details: { name: "Example", brand: "House" },
+          },
+          stale: false,
+        }),
+        write: async () => {},
+      },
+    ),
+  ).rejects.toThrow("different fragrance");
+});
