@@ -82,4 +82,14 @@ The live verifier follows at most three pages per known fragrance and requires t
 
 ### Search suggestions verification · 2026-11-13
 
-The user's Mac run reached the final unknown-query check after successfully validating Layton and Tom Ford Oud Wood profiles and notes. The previous verifier incorrectly required zero results for an arbitrary unknown query. Scento can return fuzzy suggestions, so verification now reports either empty results or the suggestion count, and checks that the unknown query was not an exact fragrance-name match. The app labels results as suggestions and retains explicit profile review and selection; a suggestion never automatically fills the bottle form. The corrected full verifier still requires a Mac rerun for a final successful report. Authenticated gateway deployment and physical-phone checks remain separate pending gates.
+The user's Mac run reached the final unknown-query check after successfully validating Layton and Tom Ford Oud Wood profiles and notes. The previous verifier incorrectly required zero results for an arbitrary unknown query. Scento can return fuzzy suggestions, so verification now reports either empty results or the suggestion count, and checks that the unknown query was not an exact fragrance-name match. The app labels results as suggestions and retains explicit profile review and selection; a suggestion never automatically fills the bottle form. The subsequent user-provided Mac run passed the corrected full verifier; see the acceptance record below. Authenticated gateway deployment and physical-phone checks remain separate pending gates.
+
+### Live provider acceptance record · received 2026-11-13
+
+The user supplied terminal output from `npm run test:scento:live` after updating their Mac checkout to `a87ed12`. All live provider/shared-adapter checks passed:
+
+- Parfums de Marly Layton: search identity and full profile matched, with 10 usable notes.
+- Tom Ford Oud Wood: search identity and full profile matched, with 6 usable notes. Two search entries without usable fragrance links were excluded.
+- Unknown query: returned 2 suggestions and no exact fragrance-name match. Suggestions were not treated as an exact identification.
+
+The Mac generated `artifacts/scento-live-verification.json`; the report file remains on that Mac and was not independently downloaded into this workspace. The terminal output establishes the upstream checks above. It does not establish authenticated Fraggy gateway deployment, capture/notes persistence on a phone, or Expo publication. Those gates remain pending. No additional upstream rerun is required merely to repeat this successful evidence.
