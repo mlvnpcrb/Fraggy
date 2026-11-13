@@ -1,4 +1,0 @@
-# Project-scoped Scento reference tools for a trusted local Codex project.
-# No API key, OAuth, or custom approval overrides are required.
-[mcp_servers.scento]
-url = "https://www.scento.com/mcp"

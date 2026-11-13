@@ -1,5 +1,0 @@
-project_id = "fraggy"
-[functions.beta-gateway]
-verify_jwt = false
-# The gateway verifies real user JWTs itself; invite redemption uses single-use
-# codes and worker callbacks use independent per-worker and per-job secrets.
