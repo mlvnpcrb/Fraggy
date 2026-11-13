@@ -9,7 +9,14 @@ function verifyProjectAccess(value) {
 }
 function validatePendingMigrations(output) {
   const found = [...new Set(output.match(/\b\d{14}_[a-z0-9_]+\.sql\b/g) || [])];
-  if (found.some((name) => name !== migration))
+  if (
+    found.some(
+      (name) =>
+        ![migration, "20261113002555_public_collector_social.sql"].includes(
+          name,
+        ),
+    )
+  )
     throw Error(
       "Unexpected pending database migrations: review the dry run before deploying.",
     );

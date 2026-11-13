@@ -54,6 +54,57 @@ const server = http.createServer((req, res) => {
       await page
         .getByRole("button", { name: "Open isolated demo", exact: true })
         .click();
+      await page.getByText("Latest shelves", { exact: true }).waitFor();
+      await page
+        .getByRole("button", { name: "Follow @mika", exact: true })
+        .click();
+      await page.getByRole("tab", { name: "Following", exact: true }).click();
+      await page
+        .getByText("A little shelf inspiration. Sample post.", { exact: false })
+        .waitFor();
+      await page
+        .getByRole("button", { name: "Like post, 0 likes", exact: true })
+        .click();
+      await page
+        .getByRole("button", { name: "Unlike post, 1 likes", exact: true })
+        .waitFor();
+      await page
+        .getByRole("button", { name: "0 comments", exact: true })
+        .click();
+      await page
+        .getByRole("textbox", { name: "Add a comment", exact: true })
+        .fill("Beautiful rotation");
+      await page
+        .getByRole("button", { name: "Post comment", exact: true })
+        .click();
+      await page.getByText("Beautiful rotation", { exact: true }).waitFor();
+      await page
+        .getByRole("button", { name: "Dismiss sheet", exact: true })
+        .click();
+      await page
+        .getByRole("tab", { name: "Latest shelves", exact: true })
+        .click();
+      await page
+        .getByRole("button", { name: "Share bottles", exact: true })
+        .click();
+      await page
+        .getByRole("textbox", { name: "Caption", exact: true })
+        .fill("My daily rotation");
+      await page
+        .getByRole("button", {
+          name: "Sample house · Sample fresh",
+          exact: true,
+        })
+        .click();
+      await page
+        .getByRole("button", { name: "Publish shelf", exact: true })
+        .click();
+      await page.getByText("My daily rotation", { exact: false }).waitFor();
+      await page.screenshot({
+        path: `artifacts/social-feed-${width}.png`,
+        fullPage: true,
+      });
+      await page.getByRole("tab", { name: /My Shelf/ }).click();
       await page.getByText("My shelf.", { exact: true }).waitFor();
       await page
         .getByRole("button", { name: "View Sample fresh", exact: true })
@@ -160,9 +211,6 @@ const server = http.createServer((req, res) => {
         .getByRole("button", { name: "Use sample bottle photo", exact: true })
         .click();
       await page
-        .getByRole("button", { name: "Find on Scento", exact: true })
-        .click();
-      await page
         .getByRole("textbox", {
           name: "Search brand or fragrance",
           exact: true,
@@ -196,6 +244,7 @@ const server = http.createServer((req, res) => {
         .getByRole("button", { name: "Place on my shelf", exact: true })
         .click();
       await page.getByText("My shelf.", { exact: true }).waitFor();
+      await page.getByRole("tab", { name: /My Shelf/ }).click();
       await page
         .getByRole("button", { name: "View Sample fragrance", exact: true })
         .waitFor();
@@ -205,7 +254,10 @@ const server = http.createServer((req, res) => {
         .getByRole("button", { name: "+ Add a fragrance", exact: true })
         .click();
       await page
-        .getByRole("button", { name: "Add a custom fragrance", exact: true })
+        .getByRole("button", {
+          name: /Enter details myself|Custom fragrance/,
+          exact: true,
+        })
         .click();
       await page
         .getByRole("textbox", { name: "Brand", exact: true })
@@ -225,6 +277,7 @@ const server = http.createServer((req, res) => {
       await page
         .getByRole("button", { name: "Open isolated demo", exact: true })
         .click();
+      await page.getByRole("tab", { name: /My Shelf/ }).click();
       await page
         .getByRole("button", { name: "View Sample fragrance", exact: true })
         .waitFor();

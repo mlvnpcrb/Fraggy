@@ -1,8 +1,8 @@
 # Fraggy
 
-A private mobile fragrance cabinet for Philippine collectors. Racing green, ivory, restrained lime, and upright bottles on continuous illuminated shelves.
+A mobile social app for fragrance collectors, centered on bottles and digital shelves. Racing green, ivory, restrained lime, and upright bottles on continuous illuminated shelves.
 
-The authoritative redesign specification is [design.md](design.md): research-backed UI/UX rules, screen wireframes and states, visual tokens, demo/live boundaries, and acceptance checks. It describes the approved target; it does not claim those screens or the planned `admin/admin` demo login are already implemented. Earlier visual specifications are historical.
+The authoritative redesign specification is [design.md](design.md): research-backed UI/UX rules, screen wireframes and states, visual tokens, demo/live boundaries, and acceptance checks. The isolated `admin/admin` demo and shared screens are implemented. [Public social experience](docs/social-experience.md) records the latest feed and privacy direction; earlier visual specifications are historical.
 
 **Capture → automatic background removal → inspect the actual transparent PNG → save to a permanent shelf.** One-for-one swaps transfer ownership only after both collectors separately confirm receipt. No payments or cash top-ups.
 
@@ -51,3 +51,5 @@ For the old session-only prototype, set `EXPO_PUBLIC_DEMO_MODE=true` and run a d
 The approved scope is [the private beta plan](docs/private-beta-plan.md). Use pull requests and timestamped Supabase migrations. The captured [pre-beta schema](supabase/baseline/remote-schema.json) contains definitions, not user records or credentials. Existing records are adopted and preserved by the baseline migration. Deployment, founder bootstrap, cleanup, backups, rollback, and handoff instructions are in the runbook.
 
 Complete app and Scento integration: [implementation and release notes](docs/complete-app-release.md).
+
+Public collector feed and sharing rules: [social experience](docs/social-experience.md).

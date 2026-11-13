@@ -165,7 +165,8 @@ const state = {
           state.jobs[0].status = "waking";
           result = { job: state.jobs[0] };
         }
-      } else if (
+      } else if(url.pathname.includes("/rpc/social_read")) result={posts:[],page_enabled:false,profile:null};
+      else if (
         url.pathname.includes("/rpc/beta_state") ||
         url.pathname.includes("/rpc/beta_section")
       )
@@ -223,7 +224,7 @@ const state = {
   await page.goto("http://127.0.0.1:8092");
   await page
     .getByRole("button", {
-      name: "Sign in or join the private beta",
+      name: "Sign in or join the beta",
       exact: true,
     })
     .click();
@@ -237,6 +238,7 @@ const state = {
     .getByRole("button", { name: "Sign in", exact: true })
     .last()
     .click();
+  await page.getByRole("tab", { name: /My Shelf/ }).click();
   await page.getByText("My shelf.", { exact: true }).waitFor();
   assert.equal(
     await page.getByText("Bleu de Chanel", { exact: true }).count(),

@@ -31,6 +31,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ProposalScreen } from "../features/trades/ProposalScreen";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { FeedScreen } from "../features/social/Screens";
 const Stack = createNativeStackNavigator<BetaStack>(),
   Tab = createBottomTabNavigator();
 function Tabs() {
@@ -46,7 +47,7 @@ function Tabs() {
             void b.refresh(
               route.name === "Discover"
                 ? ["collection", "community"]
-                : route.name === "My Shelf"
+                : route.name === "My Shelf" || route.name === "Feed"
                   ? ["collection", "jobs"]
                   : route.name === "Trades"
                     ? ["trading", "collection", "community"]
@@ -65,7 +66,7 @@ function Tabs() {
           tabBarIcon: ({ color, size }) => (
             <Feather
               name={
-                route.name === "My Shelf"
+                route.name === "My Shelf" || route.name === "Feed"
                   ? "grid"
                   : route.name === "Discover"
                     ? "compass"
@@ -79,6 +80,7 @@ function Tabs() {
           ),
         })}
       >
+        <Tab.Screen name="Feed" component={FeedScreen} />
         <Tab.Screen name="My Shelf" component={ShelfScreen} />
         <Tab.Screen name="Discover" component={DiscoverScreen} />
         <Tab.Screen

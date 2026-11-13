@@ -71,7 +71,7 @@ export async function rpc<T = unknown>(
       headers: {
         apikey: publicKey,
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.access_token || publicKey}`,
+        ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}),
       },
       body: JSON.stringify(args),
     },

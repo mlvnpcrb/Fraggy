@@ -1,3 +1,5 @@
+> Public-social update (13 November 2026): [social-experience.md](docs/social-experience.md) supersedes the private-only feed and four-tab assumptions. Feed is now the first tab, followed by My Shelf, Discover, Trades and Profile. Existing shelves remain private until explicitly shared as public post snapshots. Other accessibility, brand and trade rules still apply.
+
 # Fraggy design specification
 
 **Status:** Approved target for the demo and live app; implementation and device acceptance are pending.  

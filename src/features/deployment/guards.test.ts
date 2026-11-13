@@ -18,6 +18,9 @@ describe("deployment safeguards", () => {
         "Would push: 20261112163422_complete_app_catalog.sql",
       ),
     ).toEqual(["20261112163422_complete_app_catalog.sql"]);
+    expect(
+      validatePendingMigrations("20261113002555_public_collector_social.sql"),
+    ).toEqual(["20261113002555_public_collector_social.sql"]);
     expect(validatePendingMigrations("Remote database is up to date.")).toEqual(
       [],
     );

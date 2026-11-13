@@ -86,7 +86,7 @@ export function FragranceEditor({
     [page, setPage] = useState<CatalogSearchPage | null>(null),
     [searching, setSearching] = useState(false),
     [error, setError] = useState(""),
-    [lookup, setLookup] = useState(false),
+    [lookup, setLookup] = useState(!value.fragrance),
     [candidate, setCandidate] = useState<CatalogFragrance | null>(null),
     [expand, setExpand] = useState(false);
   const generation = useRef(0),
@@ -157,18 +157,17 @@ export function FragranceEditor({
   };
   return (
     <View style={{ gap: 12 }}>
-      <Text style={styles.label}>IDENTIFY YOUR FRAGRANCE</Text>
-      <Body>
-        Match your bottle’s name and concentration. Your own photo stays on the
-        shelf.
-      </Body>
+      <Text style={styles.label}>Fragrance details</Text>
+      <Body>Search Scento for notes, or enter your own fragrance.</Body>
+      {!lookup && (
+        <Button
+          title="Find on Scento"
+          secondary
+          onPress={() => setLookup(true)}
+        />
+      )}
       <Button
-        title={lookup ? "Close catalog search" : "Find on Scento"}
-        secondary
-        onPress={() => setLookup(!lookup)}
-      />
-      <Button
-        title="Add a custom fragrance"
+        title={lookup ? "Enter details myself" : "Custom fragrance"}
         secondary
         onPress={() => {
           ++generation.current;
@@ -189,8 +188,8 @@ export function FragranceEditor({
           <Feedback busy={searching || a.busy} error={error || a.error} />
           {b.mode === "demo" && (
             <Body>
-              Demo catalog fixture. Search “sample”; no request is sent to
-              Scento.
+              Demo catalog only. Search “sample”. Live Scento search is
+              available after signing in with a collector account.
             </Body>
           )}
           {page?.stale && (
@@ -307,55 +306,68 @@ export function FragranceEditor({
         </>
       )}
 
-      <Field
-        label="Brand"
-        value={value.brand}
-        onChangeText={(brand) => patch({ brand })}
-        maxLength={80}
-      />
-      <Field
-        label="Fragrance"
-        value={value.name}
-        onChangeText={(name) => patch({ name })}
-        maxLength={100}
-      />
-      <Button
-        title={expand ? "Hide fragrance notes" : "Notes and fragrance details"}
-        secondary
-        onPress={() => setExpand(!expand)}
-      />
-      {expand && (
+      {(!lookup || value.fragrance) && (
         <>
           <Field
-            label="Concentration (optional)"
-            value={details.concentration || ""}
-            onChangeText={(concentration) => patch({ concentration })}
-            maxLength={160}
+            label="Brand"
+            value={value.brand}
+            onChangeText={(brand) => patch({ brand })}
+            maxLength={80}
           />
           <Field
-            label="Scent family (optional)"
-            value={details.family || ""}
-            onChangeText={(family) => patch({ family })}
-            maxLength={160}
+            label="Fragrance"
+            value={value.name}
+            onChangeText={(name) => patch({ name })}
+            maxLength={100}
           />
-          {(["top", "heart", "base", "unstructuredNotes"] as const).map((k) => (
-            <Field
-              key={k}
-              label={
-                k === "unstructuredNotes"
-                  ? "Other notes · comma separated"
-                  : `${k === "heart" ? "Heart" : k === "top" ? "Top" : "Base"} notes · comma separated`
-              }
-              value={details[k].join(",")}
-              onChangeText={(raw) =>
-                patch({ [k]: raw.split(",").slice(0, 24) })
-              }
-              maxLength={500}
-            />
-          ))}
+          <Button
+            title={
+              expand ? "Hide fragrance notes" : "Notes and fragrance details"
+            }
+            secondary
+            onPress={() => setExpand(!expand)}
+          />
+          {expand && (
+            <>
+              <Field
+                label="Concentration (optional)"
+                value={details.concentration || ""}
+                onChangeText={(concentration) => patch({ concentration })}
+                maxLength={160}
+              />
+              <Field
+                label="Scent family (optional)"
+                value={details.family || ""}
+                onChangeText={(family) => patch({ family })}
+                maxLength={160}
+              />
+              {(["top", "heart", "base", "unstructuredNotes"] as const).map(
+                (k) => (
+                  <Field
+                    key={k}
+                    label={
+                      k === "unstructuredNotes"
+                        ? "Other notes · comma separated"
+                        : `${k === "heart" ? "Heart" : k === "top" ? "Top" : "Base"} notes · comma separated`
+                    }
+                    value={details[k].join(",")}
+                    onChangeText={(raw) =>
+                      patch({ [k]: raw.split(",").slice(0, 24) })
+                    }
+                    maxLength={500}
+                  />
+                ),
+              )}
+            </>
+          )}
+          {value.fragrance && expand && (
+            <FragranceSummary entry={value.fragrance} />
+          )}
+          {value.fragrance?.source === "scento" && !expand && (
+            <Body>Matched with Scento · notes saved with this bottle.</Body>
+          )}
         </>
       )}
-      {value.fragrance && <FragranceSummary entry={value.fragrance} />}
     </View>
   );
 }

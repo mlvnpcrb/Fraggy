@@ -56,7 +56,9 @@ A future incompatible metadata format must use an explicit schema migration and 
 
 The hosted `complete_app_catalog` migration was applied successfully on 2026-11-12 UTC (version `20261112163422`). The matching `beta-gateway`, including both shared catalog modules, is ACTIVE at version 2. Hosted checks confirm the fragrance column, wishlist RLS with an authenticated owner-only SELECT policy, anonymous catalog denial, and member catalog admission. The existing Render Free processor deployment remains live; its Python implementation did not change.
 
-The repository now contains the existing public Expo project link (`@mlvnpcrb/fraggy`) and SDK-compatible `expo-updates`. This workspace is not signed in to Expo; the new mobile update must be published from the already authenticated Mac:
+The owner successfully published the baseline client at commit `c5d7ad4` to Expo group [47d7f965-4d1b-45a5-89a8-bef51942b866](https://expo.dev/accounts/mlvnpcrb/projects/fraggy/updates/47d7f965-4d1b-45a5-89a8-bef51942b866), runtime `exposdk:58.0.0`, for iOS and Android. This is publication evidence, not a physical-device pass.
+
+The later public social redesign is described in [social-experience.md](social-experience.md). Its schema is deployed (`20261113002555`), but the social client requires a new Expo publication. This workspace is not signed in to Expo; use the already authenticated Mac:
 
 ```sh
 cd ~/Downloads/fraggy-beta

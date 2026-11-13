@@ -122,10 +122,24 @@ export function AppGate() {
               color: colors.ink,
             }}
           >
-            Your bottles, on your shelves. A private space to collect, discover
-            and swap fragrances.
+            Your bottles. Your shelves. Your people. Discover fragrance
+            collectors and share what you love.
           </Text>
-          {button("Sign in or join the private beta", () => void open("live"))}
+          {button(
+            "Explore public shelves",
+            () => {
+              setRuntimeMode("live");
+              setLoading(true);
+              void import("../social/Screens")
+                .then((module) => setApp(() => module.PublicFeed))
+                .catch(() =>
+                  setError("Could not open public shelves. Try again."),
+                )
+                .finally(() => setLoading(false));
+            },
+            true,
+          )}
+          {button("Sign in or join the beta", () => void open("live"))}
           <View style={{ height: 1, backgroundColor: colors.line }} />
           <Text
             style={{

@@ -35,7 +35,7 @@ import { FragranceSummary } from "../features/catalog/FragranceEditor";
 import { customEntry } from "../../supabase/functions/_shared/catalog";
 import type { BetaStack } from "./navigation";
 
-function Cabinet({
+export function Cabinet({
   bottles,
   onBottle,
   onAdd,
@@ -224,10 +224,7 @@ export function DiscoverScreen() {
       (remaining === "any" || b.remaining_percent >= Number(remaining)),
   );
   return (
-    <Page
-      title="Find your next obsession."
-      subtitle="One bottle for one bottle. No cash top-ups."
-    >
+    <Page title="Discover" compact subtitle="Find your next bottle.">
       <Field label="Fragrance or brand" value={query} onChangeText={setQuery} />
       <Button title="Filters" secondary onPress={() => setFilterOpen(true)} />
       {(city || method !== "any" || remaining !== "any") && (
